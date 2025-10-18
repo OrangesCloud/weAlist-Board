@@ -2,15 +2,32 @@
 
 칸반 보드 관리 시스템 (Workspace → Project → Ticket → Task)
 
-> 이 프로젝트는 weAlist의 공통 인프라(PostgreSQL, Redis)를 사용합니다.
+> **Cloud Native Ready**: Kubernetes 배포를 위한 베이스 애플리케이션
+
+이 프로젝트는 향후 Kubernetes 환경으로 마이그레이션하기 위한 베이스 애플리케이션입니다.
+현재는 Docker Compose로 실행하며, K8s 배포에 필요한 기능들이 이미 구현되어 있습니다.
 
 ## 기술 스택
 
+### Backend
 - Python 3.11
-- FastAPI
-- PostgreSQL (공통 인프라)
-- Redis (공통 인프라)
+- FastAPI (async/await)
+- SQLAlchemy 2.0 (ORM)
+- Alembic (DB Migration)
+- Pydantic v2 (Validation)
+
+### Infrastructure
+- PostgreSQL 16 (공통 인프라)
+- Redis 7 (공통 인프라)
 - Docker & Docker Compose
+
+### Cloud Native Features
+- ✅ Health Check Endpoints (Liveness/Readiness Probes)
+- ✅ Structured Logging (JSON)
+- ✅ Graceful Shutdown
+- ✅ Database Migration (Alembic)
+- ✅ 12-Factor App Compliance
+- ✅ Stateless Design (샤딩 대비)
 
 ## 실행 방법
 
@@ -56,8 +73,10 @@ docker-compose logs -f
 - **Task**: 작업 관리 (완료 처리 포함)
 
 ### API 문서
-- Swagger UI: http://localhost:8000/docs
-- Health Check: http://localhost:8000/health
+- **Swagger UI**: http://localhost:8000/docs
+- **Health Check**: http://localhost:8000/health
+- **Liveness Probe**: http://localhost:8000/health/live
+- **Readiness Probe**: http://localhost:8000/health/ready
 
 ## 테스트
 
@@ -91,3 +110,48 @@ docker-compose down
 
 이 프로젝트는 weAlist 공통 인프라를 사용합니다.
 다른 팀(예: Member 팀)과 인프라를 공유하는 방법은 `infrastructure/SHARING.md`를 참고하세요.
+
+---
+
+## 프로젝트 문서
+
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - 샤딩 대비 설계 (FK 제거)
+- **[K8S_READY.md](K8S_READY.md)** - Kubernetes 준비 사항 및 배포 가이드
+- **[infrastructure/SHARING.md](infrastructure/SHARING.md)** - 팀 간 인프라 공유 가이드
+
+---
+
+## 향후 계획 (Phase 2)
+
+이 베이스 애플리케이션을 기반으로 다음 작업 예정:
+
+1. **Kubernetes 마이그레이션**
+   - Helm Chart 작성
+   - ConfigMap/Secret 분리
+   - HPA (Horizontal Pod Autoscaler) 설정
+
+2. **CI/CD 파이프라인**
+   - GitHub Actions
+   - 자동 빌드 & 배포
+   - 컨테이너 이미지 레지스트리
+
+3. **모니터링 & 로깅**
+   - Prometheus + Grafana
+   - ELK Stack 또는 Loki
+   - 분산 추적 (Jaeger)
+
+4. **보안 강화**
+   - Network Policy
+   - RBAC 설정
+   - Secret 암호화 (Sealed Secrets)
+   - Security Scanning
+
+---
+
+## 기여
+
+이 프로젝트에서 사용한 도구 및 참고 자료:
+- Claude Code (코드 작성 보조)
+- FastAPI Documentation
+- Kubernetes Best Practices
+- 12-Factor App Methodology
