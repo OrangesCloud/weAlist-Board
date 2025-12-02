@@ -1,0 +1,39 @@
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Documentation
+*.md
+!README.md
+
+# Test files
+*_test.go
+
+# Build artifacts
+main
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Environment files
+.env
+.env.local
+
+# Kiro specs
+.kiro
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db

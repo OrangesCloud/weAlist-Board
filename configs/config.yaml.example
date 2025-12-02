@@ -1,0 +1,105 @@
+# Project Board Management API Configuration
+# This is an example configuration file. Copy this to config.yaml and adjust values as needed.
+
+# Server Configuration
+server:
+  # Port to listen on
+  port: "8080"
+  
+  # Server mode: "debug" or "release"
+  # debug: enables detailed logging and error messages
+  # release: optimized for production with minimal logging
+  mode: "debug"
+  
+  # HTTP read timeout (e.g., 10s, 1m)
+  read_timeout: 10s
+  
+  # HTTP write timeout (e.g., 10s, 1m)
+  write_timeout: 10s
+  
+  # Graceful shutdown timeout (e.g., 30s, 1m)
+  # Maximum time to wait for in-flight requests to complete
+  shutdown_timeout: 30s
+
+# Database Configuration
+database:
+  # PostgreSQL host
+  host: "localhost"
+  
+  # PostgreSQL port
+  port: "5432"
+  
+  # Database user
+  user: "postgres"
+  
+  # Database password
+  password: "password"
+  
+  # Database name
+  dbname: "project_board"
+  
+  # Maximum number of open connections to the database
+  max_open_conns: 25
+  
+  # Maximum number of idle connections in the pool
+  max_idle_conns: 5
+  
+  # Maximum lifetime of a connection (e.g., 5m, 1h)
+  conn_max_lifetime: 5m
+
+# Logger Configuration
+logger:
+  # Log level: "debug", "info", "warn", "error"
+  # debug: most verbose, includes all logs
+  # info: general information about application flow
+  # warn: warning messages
+  # error: error messages only
+  level: "info"
+  
+  # Output path: "stdout", "stderr", or file path (e.g., "/var/log/app.log")
+  output_path: "stdout"
+
+# JWT Configuration
+jwt:
+  # Secret key for signing JWT tokens
+  # IMPORTANT: Change this in production to a strong, random secret
+  secret: "your-secret-key-change-this-in-production"
+  
+  # Token expiration time (e.g., 24h, 7d, 168h)
+  expire_time: 24h
+
+# User API Configuration
+user_api:
+  # Base URL for the User API service
+  # Used for workspace membership validation and user profile retrieval
+  base_url: "http://localhost:8080"
+  
+  # HTTP request timeout for User API calls (e.g., 5s, 10s, 1m)
+  timeout: 5s
+
+# CORS Configuration
+cors:
+  # Allowed origins for CORS (comma-separated)
+  # Use "*" for development, specific domains for production
+  allowed_origins: "*"
+  
+# Redis Configuration (실시간 Kanban을 위해 필수!)
+redis:
+  # Redis 호스트 (docker-compose면 redis, EC2면 localhost 또는 ElastiCache 엔드포인트)
+  host: "redis"
+  port: "6379"
+  password: "${REDIS_PASSWORD}"  # docker-compose.ec2-dev.yml에 있음
+  db: 0
+  tls: false                    # 로컬/테스트용은 false, 나중에 ElastiCache면 true
+  # url: "redis://:password@host:port/0"  # 또는 이 방식으로 한 줄로 줄 수도 있음
+
+# S3 Configuration
+# AWS 환경: IAM 역할 사용 (access_key, secret_key 불필요)
+# 로컬 환경: ~/.aws/credentials 사용 (access_key, secret_key 불필요)
+# MinIO 사용 시에만 endpoint, access_key, secret_key 필요
+s3:
+  bucket: "wealist-dev-files"
+  region: "ap-northeast-2"
+  # endpoint: "http://localhost:9000"  # MinIO 사용 시에만 설정
+  # access_key: "minioadmin"           # MinIO 사용 시에만 설정
+  # secret_key: "minioadmin"           # MinIO 사용 시에만 설정

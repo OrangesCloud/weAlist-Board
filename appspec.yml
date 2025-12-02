@@ -1,0 +1,37 @@
+version: 0.0
+os: linux
+file_exists_behavior: OVERWRITE
+
+files:
+  # Board Service 스크립트 파일 복사
+  - source: /deploy.script/
+    destination: /home/ec2-user/wealist/board-service/deploy.script/
+  # Docker Compose 파일 복사 (덮어쓰기 허용)
+  - source: /docker-compose.ec2-prod.yml
+    destination: /home/ec2-user/wealist/docker/compose/
+
+permissions:
+  - object: /home/ec2-user/wealist/
+    pattern: "**"
+    owner: ec2-user
+    group: ec2-user
+    mode: 755
+    type:
+      - file
+      - directory
+
+hooks:
+  BeforeInstall:
+    - location: deploy.script/deploy-cleanup.sh
+      timeout: 600
+      runas: ec2-user
+
+  ApplicationStart:
+    - location: deploy.script/deploy-app-start.sh
+      timeout: 600
+      runas: ec2-user
+
+  ValidateService:
+    - location: deploy.script/deploy-health-check.sh
+      timeout: 300
+      runas: ec2-user

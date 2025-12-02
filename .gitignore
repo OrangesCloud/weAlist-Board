@@ -1,85 +1,90 @@
-# Environments
+# ============================================
+# Build Artifacts & Binaries
+# ============================================
+/bin/
+/main
+/board-api
+*.exe
+*.dll
+*.so
+*.dylib
+
+# ============================================
+# Local Configuration (Sensitive Data)
+# ============================================
+configs/config.yaml
+!configs/config.yaml.example
 .env
 .env.local
 .env.dev
 .env.prod
-
 docker/env/*
 
-# Docker
-postgres-data/
-redis-data/
-minio-data/
-
-# File uploads (local development)
-uploads/
-storage/
-files/
-
-# Java / Gradle
-.gradle
-build/
-BOOT-INF/
-!gradle/wrapper/gradle-wrapper.jar
-out/
-
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-.Python
-*.so
-.pytest_cache/
-htmlcov/
-.tox/
-
-# Virtual Environments
-.venv/
-venv/
-
-# IDEs
+# ============================================
+# IDE & Editor
+# ============================================
 .idea/
 .vscode/
+*.swp
+*.swo
+*~
 *.iml
 *.iws
 *.ipr
 
-# OS generated files
+# ============================================
+# OS Generated Files
+# ============================================
 .DS_Store
 Thumbs.db
+.AppleDouble
+.LSOverride
 
-# Log files
+# ============================================
+# Go Specific
+# ============================================
+vendor/
+*.out
+coverage.html
+*.test
+
+# ============================================
+# Local Development Data (Docker Volumes)
+# ============================================
+postgres-data/
+redis-data/
+minio-data/
+
+# ============================================
+# File Uploads (Local Development)
+# ============================================
+uploads/
+storage/
+files/
+
+# ============================================
+# Log Files
+# ============================================
 *.log
 
-# Backup files
+# ============================================
+# Backup Files
+# ============================================
 *.bak
 
-
-# Claude Code
+# ============================================
+# AI Tools & Local Development
+# ============================================
 .claude/
 .claudeignore
 CLAUDE.md
-
-# ai
 .kiro/
 
-# Grafana
-grafana/volume/
-grafana/volume/**
-*.db
-grafana/volume/grafana.db
-grafana/volume/plugins/
-grafana/volume/log/
-grafana/volume/png/
-prometheus/volume/
-prometheus/data/
-prometheus/volume/
-
-
-docker-compose.base.yml
-docker-compose.local.yml
-
-
-
-terraform/dev/*
+# ============================================
+# Python (Virtual Environments)
+# ============================================
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
