@@ -23,10 +23,10 @@ import (
 
 // Mock attachment repository for testing
 type mockAttachmentRepository struct {
-	createFunc          func(ctx context.Context, attachment *domain.Attachment) error
-	findByIDFunc        func(ctx context.Context, id uuid.UUID) (*domain.Attachment, error)
-	findByEntityIDFunc  func(ctx context.Context, entityType domain.EntityType, entityID uuid.UUID) ([]*domain.Attachment, error)
-	deleteFunc          func(ctx context.Context, id uuid.UUID) error
+	createFunc         func(ctx context.Context, attachment *domain.Attachment) error
+	findByIDFunc       func(ctx context.Context, id uuid.UUID) (*domain.Attachment, error)
+	findByEntityIDFunc func(ctx context.Context, entityType domain.EntityType, entityID uuid.UUID) ([]*domain.Attachment, error)
+	deleteFunc         func(ctx context.Context, id uuid.UUID) error
 }
 
 func (m *mockAttachmentRepository) Create(ctx context.Context, attachment *domain.Attachment) error {
@@ -205,7 +205,7 @@ func TestGeneratePresignedURL_FileSizeExceeded(t *testing.T) {
 		EntityType:  "BOARD",
 		WorkspaceID: "550e8400-e29b-41d4-a716-446655440000",
 		FileName:    "large-file.jpg",
-		FileSize:    21 * 1024 * 1024, // 21MB (exceeds 20MB limit)
+		FileSize:    51 * 1024 * 1024, // 21MB (exceeds 20MB limit)
 		ContentType: "image/jpeg",
 	}
 
@@ -253,8 +253,8 @@ func TestGeneratePresignedURL_InvalidFileType(t *testing.T) {
 		},
 		{
 			name:        "Unsupported document type",
-			fileName:    "archive.zip",
-			contentType: "application/zip",
+			fileName:    "diagram.exe",
+			contentType: "application/x-msdownload",
 		},
 		{
 			name:        "Mismatched extension and content type",
@@ -375,7 +375,7 @@ func TestGeneratePresignedURL_InvalidWorkspaceID(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPost, "/attachments/presigned-url", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
 
-			w := httptest.NewRecorder()
+	w := httptest.NewRecorder()
 
 	router.ServeHTTP(w, req)
 
@@ -411,7 +411,7 @@ func TestGeneratePresignedURL_ZeroFileSize(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPost, "/attachments/presigned-url", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
 
-			w := httptest.NewRecorder()
+	w := httptest.NewRecorder()
 
 	router.ServeHTTP(w, req)
 
@@ -447,7 +447,7 @@ func TestGeneratePresignedURL_MissingExtension(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPost, "/attachments/presigned-url", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
 
-			w := httptest.NewRecorder()
+	w := httptest.NewRecorder()
 
 	router.ServeHTTP(w, req)
 
@@ -672,7 +672,6 @@ func setupAttachmentHandlerWithRepo(t *testing.T, mockRepo *mockAttachmentReposi
 
 	return handler, router
 }
-
 
 // TestSaveAttachmentMetadata_Success tests successful attachment metadata save
 func TestSaveAttachmentMetadata_Success(t *testing.T) {
@@ -921,7 +920,7 @@ func TestSaveAttachmentMetadata_FileSizeValidation(t *testing.T) {
 		},
 		{
 			name:     "File size exceeds limit",
-			fileSize: 21 * 1024 * 1024, // 21MB
+			fileSize: 51 * 1024 * 1024, // 51MB
 		},
 	}
 
@@ -970,8 +969,8 @@ func TestSaveAttachmentMetadata_InvalidFileType(t *testing.T) {
 		},
 		{
 			name:        "Unsupported type",
-			fileName:    "archive.zip",
-			contentType: "application/zip",
+			fileName:    "diagram.exe",
+			contentType: "application/x-msdownload",
 		},
 	}
 
@@ -1505,13 +1504,13 @@ func setupDeleteAttachmentHandler(t *testing.T, mockRepo *mockAttachmentReposito
 
 	// Setup router
 	router := gin.New()
-	
+
 	// Add middleware to set user_id in context
 	router.Use(func(c *gin.Context) {
 		c.Set("user_id", uuid.MustParse("550e8400-e29b-41d4-a716-446655440000"))
 		c.Next()
 	})
-	
+
 	router.DELETE("/attachments/:attachmentId", handler.DeleteAttachment)
 
 	return handler, router
