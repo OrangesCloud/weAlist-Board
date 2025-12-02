@@ -1,0 +1,85 @@
+# Environments
+.env
+.env.local
+.env.dev
+.env.prod
+
+docker/env/*
+
+# Docker
+postgres-data/
+redis-data/
+minio-data/
+
+# File uploads (local development)
+uploads/
+storage/
+files/
+
+# Java / Gradle
+.gradle
+build/
+BOOT-INF/
+!gradle/wrapper/gradle-wrapper.jar
+out/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.so
+.pytest_cache/
+htmlcov/
+.tox/
+
+# Virtual Environments
+.venv/
+venv/
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Backup files
+*.bak
+
+
+# Claude Code
+.claude/
+.claudeignore
+CLAUDE.md
+
+# ai
+.kiro/
+
+# Grafana
+grafana/volume/
+grafana/volume/**
+*.db
+grafana/volume/grafana.db
+grafana/volume/plugins/
+grafana/volume/log/
+grafana/volume/png/
+prometheus/volume/
+prometheus/data/
+prometheus/volume/
+
+
+docker-compose.base.yml
+docker-compose.local.yml
+
+
+
+terraform/dev/*
