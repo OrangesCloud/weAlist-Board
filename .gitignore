@@ -4,6 +4,7 @@
 /bin/
 /main
 /board-api
+/api
 *.exe
 *.dll
 *.so
