@@ -61,6 +61,7 @@ func TestCreateBoardWithAttachments(t *testing.T) {
 		mockFieldOptionConverter := &MockFieldOptionConverter{}
 		mockParticipantRepo := &MockParticipantRepository{}
 		mockFieldOptionRepo := &MockFieldOptionRepository{}
+		mockS3Client := &MockS3Client{}
 
 		service := NewBoardService(
 			mockBoardRepo,
@@ -68,7 +69,7 @@ func TestCreateBoardWithAttachments(t *testing.T) {
 			mockFieldOptionRepo,
 			mockParticipantRepo,
 			mockAttachmentRepo,
-			nil, // s3Client
+			mockS3Client,
 			mockFieldOptionConverter,
 			nil, // metrics
 			logger,
@@ -112,6 +113,7 @@ func TestCreateBoardWithAttachments(t *testing.T) {
 		mockFieldOptionConverter := &MockFieldOptionConverter{}
 		mockParticipantRepo := &MockParticipantRepository{}
 		mockFieldOptionRepo := &MockFieldOptionRepository{}
+		mockS3Client := &MockS3Client{}
 
 		service := NewBoardService(
 			mockBoardRepo,
@@ -119,7 +121,7 @@ func TestCreateBoardWithAttachments(t *testing.T) {
 			mockFieldOptionRepo,
 			mockParticipantRepo,
 			mockAttachmentRepo,
-			nil, // s3Client
+			mockS3Client,
 			mockFieldOptionConverter,
 			nil, // metrics
 			logger,
@@ -173,6 +175,7 @@ func TestCreateBoardWithAttachments(t *testing.T) {
 		mockFieldOptionConverter := &MockFieldOptionConverter{}
 		mockParticipantRepo := &MockParticipantRepository{}
 		mockFieldOptionRepo := &MockFieldOptionRepository{}
+		mockS3Client := &MockS3Client{}
 
 		service := NewBoardService(
 			mockBoardRepo,
@@ -180,7 +183,7 @@ func TestCreateBoardWithAttachments(t *testing.T) {
 			mockFieldOptionRepo,
 			mockParticipantRepo,
 			mockAttachmentRepo,
-			nil, // s3Client
+			mockS3Client,
 			mockFieldOptionConverter,
 			nil, // metrics
 			logger,
@@ -235,13 +238,15 @@ func TestCreateBoardWithAttachments(t *testing.T) {
 		mockParticipantRepo := &MockParticipantRepository{}
 		mockFieldOptionRepo := &MockFieldOptionRepository{}
 
+		mockS3Client := &MockS3Client{}
+
 		service := NewBoardService(
 			mockBoardRepo,
 			mockProjectRepo,
 			mockFieldOptionRepo,
 			mockParticipantRepo,
 			mockAttachmentRepo,
-			nil, // s3Client
+			mockS3Client,
 			mockFieldOptionConverter,
 			nil, // metrics
 			logger,
@@ -310,7 +315,8 @@ func TestCreateCommentWithAttachments(t *testing.T) {
 			},
 		}
 
-		service := NewCommentService(mockCommentRepo, mockBoardRepo, mockAttachmentRepo, nil, logger)
+		mockS3Client := &MockS3Client{}
+		service := NewCommentService(mockCommentRepo, mockBoardRepo, mockAttachmentRepo, mockS3Client, logger)
 
 		req := &dto.CreateCommentRequest{
 			BoardID:       boardID,
@@ -346,7 +352,8 @@ func TestCreateCommentWithAttachments(t *testing.T) {
 			},
 		}
 
-		service := NewCommentService(mockCommentRepo, mockBoardRepo, mockAttachmentRepo, nil, logger)
+		mockS3Client := &MockS3Client{}
+		service := NewCommentService(mockCommentRepo, mockBoardRepo, mockAttachmentRepo, mockS3Client, logger)
 
 		req := &dto.CreateCommentRequest{
 			BoardID:       boardID,
@@ -412,7 +419,8 @@ func TestCreateProjectWithAttachments(t *testing.T) {
 			},
 		}
 
-		service := NewProjectService(mockProjectRepo, mockFieldOptionRepo, mockAttachmentRepo, nil, mockUserClient, nil, logger)
+		mockS3Client := &MockS3Client{}
+		service := NewProjectService(mockProjectRepo, mockFieldOptionRepo, mockAttachmentRepo, mockS3Client, mockUserClient, nil, logger)
 
 		req := &dto.CreateProjectRequest{
 			WorkspaceID:   workspaceID,
@@ -451,7 +459,8 @@ func TestCreateProjectWithAttachments(t *testing.T) {
 			},
 		}
 
-		service := NewProjectService(mockProjectRepo, mockFieldOptionRepo, mockAttachmentRepo, nil, mockUserClient, nil, logger)
+		mockS3Client := &MockS3Client{}
+		service := NewProjectService(mockProjectRepo, mockFieldOptionRepo, mockAttachmentRepo, mockS3Client, mockUserClient, nil, logger)
 
 		req := &dto.CreateProjectRequest{
 			WorkspaceID:   workspaceID,

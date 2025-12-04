@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"io"
 
 	"github.com/google/uuid"
 
@@ -251,4 +252,48 @@ func (m *MockAttachmentRepository) DeleteBatch(ctx context.Context, attachmentID
 		return m.DeleteBatchFunc(ctx, attachmentIDs)
 	}
 	return nil
+}
+
+// MockS3Client is a mock implementation of S3Client
+type MockS3Client struct {
+	GenerateFileKeyFunc      func(entityType, workspaceID, fileExt string) (string, error)
+	GeneratePresignedURLFunc func(ctx context.Context, entityType, workspaceID, fileName, contentType string) (string, string, error)
+	UploadFileFunc           func(ctx context.Context, key string, file io.Reader, contentType string) (string, error)
+	DeleteFileFunc           func(ctx context.Context, key string) error
+	GetFileURLFunc           func(key string) string
+}
+
+func (m *MockS3Client) GenerateFileKey(entityType, workspaceID, fileExt string) (string, error) {
+	if m.GenerateFileKeyFunc != nil {
+		return m.GenerateFileKeyFunc(entityType, workspaceID, fileExt)
+	}
+	return "mock-file-key" + fileExt, nil
+}
+
+func (m *MockS3Client) GeneratePresignedURL(ctx context.Context, entityType, workspaceID, fileName, contentType string) (string, string, error) {
+	if m.GeneratePresignedURLFunc != nil {
+		return m.GeneratePresignedURLFunc(ctx, entityType, workspaceID, fileName, contentType)
+	}
+	return "https://mock-presigned-url.com", "mock-file-key", nil
+}
+
+func (m *MockS3Client) UploadFile(ctx context.Context, key string, file io.Reader, contentType string) (string, error) {
+	if m.UploadFileFunc != nil {
+		return m.UploadFileFunc(ctx, key, file, contentType)
+	}
+	return "https://mock-s3-url.com/" + key, nil
+}
+
+func (m *MockS3Client) DeleteFile(ctx context.Context, key string) error {
+	if m.DeleteFileFunc != nil {
+		return m.DeleteFileFunc(ctx, key)
+	}
+	return nil
+}
+
+func (m *MockS3Client) GetFileURL(key string) string {
+	if m.GetFileURLFunc != nil {
+		return m.GetFileURLFunc(key)
+	}
+	return "https://mock-s3-url.com/" + key
 }
