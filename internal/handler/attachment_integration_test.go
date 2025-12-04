@@ -40,7 +40,7 @@ func setupAttachmentIntegrationTestDB(t *testing.T) *gorm.DB {
 		}
 	})
 
-	// Create attachments table (current schema without Status and ExpiresAt)
+	// Create attachments table (updated schema with status and expires_at)
 	err = db.Exec(`
 		CREATE TABLE attachments (
 			id TEXT PRIMARY KEY,
@@ -48,12 +48,14 @@ func setupAttachmentIntegrationTestDB(t *testing.T) *gorm.DB {
 			updated_at DATETIME NOT NULL,
 			deleted_at DATETIME,
 			entity_type TEXT NOT NULL,
-			entity_id TEXT NOT NULL,
+			entity_id TEXT,
+			status TEXT NOT NULL DEFAULT 'TEMP',
 			file_name TEXT NOT NULL,
 			file_url TEXT NOT NULL,
 			file_size INTEGER NOT NULL,
 			content_type TEXT NOT NULL,
-			uploaded_by TEXT NOT NULL
+			uploaded_by TEXT NOT NULL,
+			expires_at DATETIME
 		)
 	`).Error
 	require.NoError(t, err, "Failed to create attachments table")
@@ -198,7 +200,7 @@ func TestIntegration_PresignedURL_BoardFlow(t *testing.T) {
 			name:           "Reject file exceeding size limit",
 			entityType:     "BOARD",
 			fileName:       "large-file.jpg",
-			fileSize:       21 * 1024 * 1024, // 21MB
+			fileSize:       51 * 1024 * 1024, // 51MB (exceeds 50MB limit)
 			contentType:    "image/jpeg",
 			expectedStatus: http.StatusBadRequest,
 			validateFunc: func(t *testing.T, w *httptest.ResponseRecorder) {
@@ -475,22 +477,22 @@ func TestIntegration_PresignedURL_FileSizeValidation(t *testing.T) {
 			description:    "Should accept 10MB file",
 		},
 		{
-			name:           "Accept exactly 20MB file",
-			fileSize:       20 * 1024 * 1024,
-			expectedStatus: http.StatusOK,
-			description:    "Should accept exactly 20MB file",
-		},
-		{
-			name:           "Reject 21MB file",
-			fileSize:       21 * 1024 * 1024,
-			expectedStatus: http.StatusBadRequest,
-			description:    "Should reject 21MB file",
-		},
-		{
-			name:           "Reject 50MB file",
+			name:           "Accept exactly 50MB file",
 			fileSize:       50 * 1024 * 1024,
+			expectedStatus: http.StatusOK,
+			description:    "Should accept exactly 50MB file (at the limit)",
+		},
+		{
+			name:           "Reject 51MB file",
+			fileSize:       51 * 1024 * 1024,
 			expectedStatus: http.StatusBadRequest,
-			description:    "Should reject 50MB file",
+			description:    "Should reject 51MB file (exceeds limit)",
+		},
+		{
+			name:           "Reject 100MB file",
+			fileSize:       100 * 1024 * 1024,
+			expectedStatus: http.StatusBadRequest,
+			description:    "Should reject 100MB file (far exceeds limit)",
 		},
 		{
 			name:           "Reject zero size file",

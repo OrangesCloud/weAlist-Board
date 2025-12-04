@@ -482,7 +482,7 @@ func TestCommentService_toCommentResponse_Attachments(t *testing.T) {
 	mockCommentRepo := &MockCommentRepository{}
 	mockBoardRepo := &MockBoardRepository{}
 	logger, _ := zap.NewDevelopment()
-			service := NewCommentService(mockCommentRepo, mockBoardRepo, &MockAttachmentRepository{}, nil, logger)
+			service := NewCommentService(mockCommentRepo, mockBoardRepo, &MockAttachmentRepository{}, &MockS3Client{}, logger)
 
 	t.Run("첨부파일 변환: 여러 첨부파일", func(t *testing.T) {
 		commentID := uuid.New()
