@@ -15,7 +15,6 @@ import (
 	"project-board-api/internal/response"
 )
 
-// convertBoardCustomFieldsToValues converts custom field IDs to values for display
 func (s *boardServiceImpl) convertBoardCustomFieldsToValues(ctx context.Context, board *domain.Board) error {
 	if board.CustomFields == nil || len(board.CustomFields) == 0 {
 		return nil
