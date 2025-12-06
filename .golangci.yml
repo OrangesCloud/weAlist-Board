@@ -8,6 +8,9 @@ linters:
     # TODO: 점진적으로 수정 후 활성화
     # 기존 코드에 에러 반환값 미처리가 많아 일시 비활성화
     - errcheck
+    # TODO: Go 1.25.4 호환되는 golangci-lint 버전 출시 후 활성화
+    # 현재 golangci-lint가 Go 1.24로 빌드되어 go.mod의 1.25.4를 인식 못함
+    - typecheck
 
 linters-settings:
   staticcheck:

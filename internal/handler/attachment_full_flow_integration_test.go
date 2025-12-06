@@ -32,6 +32,9 @@ import (
 
 // setupFullFlowTestDB creates an in-memory SQLite database with all required tables
 func setupFullFlowTestDB(t *testing.T) *gorm.DB {
+	if testing.Short() {
+		t.Skip("Skipping S3 integration test in short mode")
+	}
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})

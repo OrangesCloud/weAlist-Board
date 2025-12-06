@@ -128,6 +128,9 @@ func TestGenerateFileKey_Uniqueness(t *testing.T) {
 }
 
 func TestGeneratePresignedURL(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping S3 integration test in short mode")
+	}
 	cfg := &config.S3Config{
 		Bucket:    "test-bucket",
 		Region:    "ap-northeast-2",
@@ -240,6 +243,9 @@ func TestGeneratePresignedURL(t *testing.T) {
 }
 
 func TestGeneratePresignedURL_ExpirationTime(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping S3 integration test in short mode")
+	}
 	cfg := &config.S3Config{
 		Bucket:    "test-bucket",
 		Region:    "ap-northeast-2",
@@ -345,6 +351,9 @@ func TestGetFileURL(t *testing.T) {
 }
 
 func TestGeneratePresignedURL_ContextCancellation(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping S3 integration test in short mode")
+	}
 	cfg := &config.S3Config{
 		Bucket:    "test-bucket",
 		Region:    "ap-northeast-2",
@@ -369,6 +378,9 @@ func TestGeneratePresignedURL_ContextCancellation(t *testing.T) {
 }
 
 func TestGeneratePresignedURL_ConcurrentCalls(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping S3 integration test in short mode")
+	}
 	cfg := &config.S3Config{
 		Bucket:    "test-bucket",
 		Region:    "ap-northeast-2",

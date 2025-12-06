@@ -78,6 +78,9 @@ func (m *mockAttachmentRepository) DeleteBatch(ctx context.Context, attachmentID
 
 // setupAttachmentHandler creates a test handler with a mock S3 client
 func setupAttachmentHandler(t *testing.T) (*AttachmentHandler, *gin.Engine) {
+	if testing.Short() {
+		t.Skip("Skipping S3 integration test in short mode")
+	}
 	gin.SetMode(gin.TestMode)
 
 	// Create S3 config for testing
