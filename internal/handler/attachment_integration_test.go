@@ -15,15 +15,11 @@ import (
 	"gorm.io/gorm"
 
 	"project-board-api/internal/client"
-	"project-board-api/internal/config"
 	"project-board-api/internal/repository"
 )
 
 // setupAttachmentIntegrationTestDB creates an in-memory SQLite database for attachment integration testing
 func setupAttachmentIntegrationTestDB(t *testing.T) *gorm.DB {
-	if testing.Short() {
-		t.Skip("Skipping S3 integration test in short mode")
-	}
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
@@ -67,7 +63,7 @@ func setupAttachmentIntegrationTestDB(t *testing.T) *gorm.DB {
 }
 
 // setupAttachmentIntegrationRouter creates a router with attachment handler
-func setupAttachmentIntegrationRouter(db *gorm.DB, s3Client *client.S3Client) *gin.Engine {
+func setupAttachmentIntegrationRouter(db *gorm.DB, s3Client client.S3ClientInterface) *gin.Engine {
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
 
@@ -104,17 +100,10 @@ func setupAttachmentIntegrationRouter(db *gorm.DB, s3Client *client.S3Client) *g
 func TestIntegration_PresignedURL_BoardFlow(t *testing.T) {
 	db := setupAttachmentIntegrationTestDB(t)
 
-	// Create S3 client with test configuration
-	cfg := &config.S3Config{
-		Bucket:    "test-bucket",
-		Region:    "us-east-1",
-		AccessKey: "test-key",
-		SecretKey: "test-secret",
-	}
-	s3Client, err := client.NewS3Client(cfg)
-	require.NoError(t, err, "Failed to create S3 client")
+	// Use MockS3Client instead of real S3 client
+	mockS3Client := client.NewMockS3Client()
 
-	router := setupAttachmentIntegrationRouter(db, s3Client)
+	router := setupAttachmentIntegrationRouter(db, mockS3Client)
 
 	workspaceID := uuid.New()
 	userID := uuid.New()
@@ -266,16 +255,10 @@ func TestIntegration_PresignedURL_BoardFlow(t *testing.T) {
 func TestIntegration_PresignedURL_InvalidEntityType(t *testing.T) {
 	db := setupAttachmentIntegrationTestDB(t)
 
-	cfg := &config.S3Config{
-		Bucket:    "test-bucket",
-		Region:    "us-east-1",
-		AccessKey: "test-key",
-		SecretKey: "test-secret",
-	}
-	s3Client, err := client.NewS3Client(cfg)
-	require.NoError(t, err, "Failed to create S3 client")
+	// Use MockS3Client instead of real S3 client
+	mockS3Client := client.NewMockS3Client()
 
-	router := setupAttachmentIntegrationRouter(db, s3Client)
+	router := setupAttachmentIntegrationRouter(db, mockS3Client)
 
 	workspaceID := uuid.New()
 	userID := uuid.New()
@@ -338,16 +321,10 @@ func TestIntegration_PresignedURL_InvalidEntityType(t *testing.T) {
 func TestIntegration_PresignedURL_FileTypeValidation(t *testing.T) {
 	db := setupAttachmentIntegrationTestDB(t)
 
-	cfg := &config.S3Config{
-		Bucket:    "test-bucket",
-		Region:    "us-east-1",
-		AccessKey: "test-key",
-		SecretKey: "test-secret",
-	}
-	s3Client, err := client.NewS3Client(cfg)
-	require.NoError(t, err, "Failed to create S3 client")
+	// Use MockS3Client instead of real S3 client
+	mockS3Client := client.NewMockS3Client()
 
-	router := setupAttachmentIntegrationRouter(db, s3Client)
+	router := setupAttachmentIntegrationRouter(db, mockS3Client)
 
 	workspaceID := uuid.New()
 	userID := uuid.New()
@@ -447,16 +424,10 @@ func TestIntegration_PresignedURL_FileTypeValidation(t *testing.T) {
 func TestIntegration_PresignedURL_FileSizeValidation(t *testing.T) {
 	db := setupAttachmentIntegrationTestDB(t)
 
-	cfg := &config.S3Config{
-		Bucket:    "test-bucket",
-		Region:    "us-east-1",
-		AccessKey: "test-key",
-		SecretKey: "test-secret",
-	}
-	s3Client, err := client.NewS3Client(cfg)
-	require.NoError(t, err, "Failed to create S3 client")
+	// Use MockS3Client instead of real S3 client
+	mockS3Client := client.NewMockS3Client()
 
-	router := setupAttachmentIntegrationRouter(db, s3Client)
+	router := setupAttachmentIntegrationRouter(db, mockS3Client)
 
 	workspaceID := uuid.New()
 	userID := uuid.New()
@@ -541,16 +512,10 @@ func TestIntegration_PresignedURL_FileSizeValidation(t *testing.T) {
 func TestIntegration_PresignedURL_CompleteWorkflow(t *testing.T) {
 	db := setupAttachmentIntegrationTestDB(t)
 
-	cfg := &config.S3Config{
-		Bucket:    "test-bucket",
-		Region:    "us-east-1",
-		AccessKey: "test-key",
-		SecretKey: "test-secret",
-	}
-	s3Client, err := client.NewS3Client(cfg)
-	require.NoError(t, err, "Failed to create S3 client")
+	// Use MockS3Client instead of real S3 client
+	mockS3Client := client.NewMockS3Client()
 
-	router := setupAttachmentIntegrationRouter(db, s3Client)
+	router := setupAttachmentIntegrationRouter(db, mockS3Client)
 
 	workspaceID := uuid.New()
 	userID := uuid.New()
