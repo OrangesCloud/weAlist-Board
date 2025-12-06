@@ -21,7 +21,7 @@ jobs:
           cache: true
 
       - name: Run tests
-        run: go test -short -v ./...
+        run: go test -short ./...
 
   lint:
     name: Lint
@@ -37,9 +37,9 @@ jobs:
           cache: true
 
       - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@v4
+        uses: golangci/golangci-lint-action@v6
         with:
-          version: latest
+          version: v1.64.8
           args: --timeout=5m
 
   build:
