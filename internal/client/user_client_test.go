@@ -17,7 +17,7 @@ import (
 var testClientMetrics *metrics.Metrics
 
 func init() {
-	testClientMetrics = metrics.New()
+	testClientMetrics = metrics.NewTestMetrics()
 }
 
 func TestUserClient_ValidateWorkspaceMember(t *testing.T) {

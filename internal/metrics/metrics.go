@@ -46,6 +46,13 @@ func New() *Metrics {
 	return NewWithRegistry(prometheus.DefaultRegisterer, nil)
 }
 
+// NewTestMetrics creates metrics with an isolated registry for testing
+// This prevents "duplicate metrics collector registration" errors in tests
+func NewTestMetrics() *Metrics {
+	registry := prometheus.NewRegistry()
+	return NewWithRegistry(registry, nil)
+}
+
 // NewWithLogger creates and registers all metrics with the default registry and a logger
 func NewWithLogger(logger *zap.Logger) *Metrics {
 	return NewWithRegistry(prometheus.DefaultRegisterer, logger)

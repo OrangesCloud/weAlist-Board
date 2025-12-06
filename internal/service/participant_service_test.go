@@ -14,41 +14,7 @@ import (
 	"project-board-api/internal/response"
 )
 
-// MockParticipantRepository is a mock implementation of ParticipantRepository
-type MockParticipantRepository struct {
-	CreateFunc             func(ctx context.Context, participant *domain.Participant) error
-	FindByBoardIDFunc      func(ctx context.Context, boardID uuid.UUID) ([]*domain.Participant, error)
-	FindByBoardAndUserFunc func(ctx context.Context, boardID, userID uuid.UUID) (*domain.Participant, error)
-	DeleteFunc             func(ctx context.Context, boardID, userID uuid.UUID) error
-}
-
-func (m *MockParticipantRepository) Create(ctx context.Context, participant *domain.Participant) error {
-	if m.CreateFunc != nil {
-		return m.CreateFunc(ctx, participant)
-	}
-	return nil
-}
-
-func (m *MockParticipantRepository) FindByBoardID(ctx context.Context, boardID uuid.UUID) ([]*domain.Participant, error) {
-	if m.FindByBoardIDFunc != nil {
-		return m.FindByBoardIDFunc(ctx, boardID)
-	}
-	return nil, nil
-}
-
-func (m *MockParticipantRepository) FindByBoardAndUser(ctx context.Context, boardID, userID uuid.UUID) (*domain.Participant, error) {
-	if m.FindByBoardAndUserFunc != nil {
-		return m.FindByBoardAndUserFunc(ctx, boardID, userID)
-	}
-	return nil, nil
-}
-
-func (m *MockParticipantRepository) Delete(ctx context.Context, boardID, userID uuid.UUID) error {
-	if m.DeleteFunc != nil {
-		return m.DeleteFunc(ctx, boardID, userID)
-	}
-	return nil
-}
+// Mock implementations are in mock_test.go
 
 func TestParticipantService_AddParticipants(t *testing.T) {
 	boardID := uuid.New()

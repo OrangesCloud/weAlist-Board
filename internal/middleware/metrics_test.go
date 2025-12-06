@@ -15,7 +15,7 @@ import (
 var testMetrics *metrics.Metrics
 
 func init() {
-	testMetrics = metrics.New()
+	testMetrics = metrics.NewTestMetrics()
 }
 
 func setupTestRouter(m *metrics.Metrics) *gin.Engine {

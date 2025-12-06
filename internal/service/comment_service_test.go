@@ -15,49 +15,7 @@ import (
 	"project-board-api/internal/response"
 )
 
-// MockCommentRepository is a mock implementation of CommentRepository
-type MockCommentRepository struct {
-	CreateFunc      func(ctx context.Context, comment *domain.Comment) error
-	FindByIDFunc    func(ctx context.Context, id uuid.UUID) (*domain.Comment, error)
-	FindByBoardIDFunc func(ctx context.Context, boardID uuid.UUID) ([]*domain.Comment, error)
-	UpdateFunc      func(ctx context.Context, comment *domain.Comment) error
-	DeleteFunc      func(ctx context.Context, id uuid.UUID) error
-}
-
-func (m *MockCommentRepository) Create(ctx context.Context, comment *domain.Comment) error {
-	if m.CreateFunc != nil {
-		return m.CreateFunc(ctx, comment)
-	}
-	return nil
-}
-
-func (m *MockCommentRepository) FindByID(ctx context.Context, id uuid.UUID) (*domain.Comment, error) {
-	if m.FindByIDFunc != nil {
-		return m.FindByIDFunc(ctx, id)
-	}
-	return nil, nil
-}
-
-func (m *MockCommentRepository) FindByBoardID(ctx context.Context, boardID uuid.UUID) ([]*domain.Comment, error) {
-	if m.FindByBoardIDFunc != nil {
-		return m.FindByBoardIDFunc(ctx, boardID)
-	}
-	return nil, nil
-}
-
-func (m *MockCommentRepository) Update(ctx context.Context, comment *domain.Comment) error {
-	if m.UpdateFunc != nil {
-		return m.UpdateFunc(ctx, comment)
-	}
-	return nil
-}
-
-func (m *MockCommentRepository) Delete(ctx context.Context, id uuid.UUID) error {
-	if m.DeleteFunc != nil {
-		return m.DeleteFunc(ctx, id)
-	}
-	return nil
-}
+// Mock implementations are in mock_test.go
 
 func TestCommentService_CreateComment(t *testing.T) {
 	boardID := uuid.New()
