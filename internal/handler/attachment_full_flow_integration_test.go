@@ -20,7 +20,6 @@ import (
 	"gorm.io/gorm"
 
 	"project-board-api/internal/client"
-	"project-board-api/internal/config"
 	"project-board-api/internal/converter"
 	"project-board-api/internal/domain"
 	"project-board-api/internal/dto"
@@ -138,7 +137,7 @@ func setupFullFlowTestDB(t *testing.T) *gorm.DB {
 // setupFullFlowRouter creates a router with all required handlers
 func setupFullFlowRouter(
 	db *gorm.DB,
-	s3Client *client.S3Client,
+	s3Client client.S3ClientInterface,
 	boardService service.BoardService,
 ) *gin.Engine {
 	gin.SetMode(gin.TestMode)
@@ -185,18 +184,11 @@ func setupFullFlowRouter(
 
 // TestIntegration_CompleteAttachmentFlow tests the complete attachment flow
 // **Validates: Requirements 7.1, 7.2, 7.3, 7.4, 8.1, 8.2, 8.3, 9.3**
-func TestIntegration_CompleteAttachmentFlow(t *testing.T) {
+func TestIntegrationCompleteAttachmentFlow(t *testing.T) {
 	db := setupFullFlowTestDB(t)
 
-	// Create S3 client with test configuration
-	cfg := &config.S3Config{
-		Bucket:    "test-bucket",
-		Region:    "us-east-1",
-		AccessKey: "test-key",
-		SecretKey: "test-secret",
-	}
-	s3Client, err := client.NewS3Client(cfg)
-	require.NoError(t, err, "Failed to create S3 client")
+	// Use MockS3Client instead of real S3 client
+	s3Client := client.NewMockS3Client()
 
 	// Initialize repositories
 	boardRepo := repository.NewBoardRepository(db)
@@ -236,8 +228,8 @@ func TestIntegration_CompleteAttachmentFlow(t *testing.T) {
 		OwnerID:     userID,
 		IsDefault:   false,
 	}
-	err = projectRepo.Create(context.Background(), project)
-	require.NoError(t, err, "Failed to create test project")
+	errCreate := projectRepo.Create(context.Background(), project)
+	require.NoError(t, errCreate, "Failed to create test project")
 
 	// Step 1: Request presigned URL for temporary upload
 	t.Run("Step 1: Request presigned URL", func(t *testing.T) {
@@ -262,8 +254,8 @@ func TestIntegration_CompleteAttachmentFlow(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code, "Presigned URL generation should succeed")
 
 		var response map[string]interface{}
-		err = json.Unmarshal(w.Body.Bytes(), &response)
-		require.NoError(t, err)
+		errUnmarshal := json.Unmarshal(w.Body.Bytes(), &response)
+		require.NoError(t, errUnmarshal)
 
 		data, ok := response["data"].(map[string]interface{})
 		require.True(t, ok, "Response should contain data field")
@@ -308,8 +300,8 @@ func TestIntegration_CompleteAttachmentFlow(t *testing.T) {
 		assert.Equal(t, http.StatusCreated, w.Code, "Attachment metadata save should succeed")
 
 		var response map[string]interface{}
-		err = json.Unmarshal(w.Body.Bytes(), &response)
-		require.NoError(t, err)
+		errUnmarshal := json.Unmarshal(w.Body.Bytes(), &response)
+		require.NoError(t, errUnmarshal)
 
 		data, ok := response["data"].(map[string]interface{})
 		require.True(t, ok, "Response should contain data field")
@@ -352,8 +344,8 @@ func TestIntegration_CompleteAttachmentFlow(t *testing.T) {
 		assert.Equal(t, http.StatusCreated, w.Code, "Board creation should succeed")
 
 		var response map[string]interface{}
-		err = json.Unmarshal(w.Body.Bytes(), &response)
-		require.NoError(t, err)
+		errUnmarshal := json.Unmarshal(w.Body.Bytes(), &response)
+		require.NoError(t, errUnmarshal)
 
 		data, ok := response["data"].(map[string]interface{})
 		require.True(t, ok, "Response should contain data field")
@@ -381,8 +373,8 @@ func TestIntegration_CompleteAttachmentFlow(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code, "Board retrieval should succeed")
 
 		var response map[string]interface{}
-		err = json.Unmarshal(w.Body.Bytes(), &response)
-		require.NoError(t, err)
+		errUnmarshal := json.Unmarshal(w.Body.Bytes(), &response)
+		require.NoError(t, errUnmarshal)
 
 		data, ok := response["data"].(map[string]interface{})
 		require.True(t, ok, "Response should contain data field")
@@ -456,17 +448,11 @@ func TestIntegration_CompleteAttachmentFlow(t *testing.T) {
 
 // TestIntegration_MultipleAttachmentsFlow tests creating a board with multiple attachments
 // **Validates: Requirements 8.1, 8.2, 8.3**
-func TestIntegration_MultipleAttachmentsFlow(t *testing.T) {
+func TestIntegrationMultipleAttachmentsFlow(t *testing.T) {
 	db := setupFullFlowTestDB(t)
 
-	cfg := &config.S3Config{
-		Bucket:    "test-bucket",
-		Region:    "us-east-1",
-		AccessKey: "test-key",
-		SecretKey: "test-secret",
-	}
-	s3Client, err := client.NewS3Client(cfg)
-	require.NoError(t, err)
+	// Use MockS3Client instead of real S3 client
+	s3Client := client.NewMockS3Client()
 
 	// Initialize repositories and services
 	boardRepo := repository.NewBoardRepository(db)
@@ -503,8 +489,8 @@ func TestIntegration_MultipleAttachmentsFlow(t *testing.T) {
 		Name:        "Test Project",
 		OwnerID:     userID,
 	}
-	err = projectRepo.Create(context.Background(), project)
-	require.NoError(t, err)
+	errProject := projectRepo.Create(context.Background(), project)
+	require.NoError(t, errProject)
 
 	// Create multiple temporary attachments
 	attachmentIDs := make([]uuid.UUID, 3)
@@ -575,17 +561,11 @@ func TestIntegration_MultipleAttachmentsFlow(t *testing.T) {
 
 // TestIntegration_AttachmentValidationErrors tests error scenarios
 // **Validates: Requirements 8.2**
-func TestIntegration_AttachmentValidationErrors(t *testing.T) {
+func TestIntegrationAttachmentValidationErrors(t *testing.T) {
 	db := setupFullFlowTestDB(t)
 
-	cfg := &config.S3Config{
-		Bucket:    "test-bucket",
-		Region:    "us-east-1",
-		AccessKey: "test-key",
-		SecretKey: "test-secret",
-	}
-	s3Client, err := client.NewS3Client(cfg)
-	require.NoError(t, err)
+	// Use MockS3Client instead of real S3 client
+	s3Client := client.NewMockS3Client()
 
 	// Initialize repositories and services
 	boardRepo := repository.NewBoardRepository(db)
@@ -622,8 +602,8 @@ func TestIntegration_AttachmentValidationErrors(t *testing.T) {
 		Name:        "Test Project",
 		OwnerID:     userID,
 	}
-	err = projectRepo.Create(context.Background(), project)
-	require.NoError(t, err)
+	errProject := projectRepo.Create(context.Background(), project)
+	require.NoError(t, errProject)
 
 	t.Run("Reject non-existent attachment ID", func(t *testing.T) {
 		nonExistentID := uuid.New()

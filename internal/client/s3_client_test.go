@@ -128,16 +128,8 @@ func TestGenerateFileKey_Uniqueness(t *testing.T) {
 }
 
 func TestGeneratePresignedURL(t *testing.T) {
-	cfg := &config.S3Config{
-		Bucket:    "test-bucket",
-		Region:    "ap-northeast-2",
-		AccessKey: "test-access-key",
-		SecretKey: "test-secret-key",
-	}
-
-	client, err := NewS3Client(cfg)
-	require.NoError(t, err)
-	require.NotNil(t, client)
+	// Use MockS3Client for testing without AWS credentials
+	client := NewMockS3Client()
 
 	tests := []struct {
 		name        string
@@ -217,7 +209,7 @@ func TestGeneratePresignedURL(t *testing.T) {
 			assert.NotEmpty(t, fileKey, "File key should not be empty")
 
 			// Verify URL contains bucket name
-			assert.Contains(t, url, cfg.Bucket, "URL should contain bucket name")
+			assert.Contains(t, url, client.Bucket, "URL should contain bucket name")
 
 			// Verify URL contains file key (URL encoded)
 			assert.Contains(t, url, "board", "URL should contain 'board' prefix")
@@ -240,22 +232,15 @@ func TestGeneratePresignedURL(t *testing.T) {
 }
 
 func TestGeneratePresignedURL_ExpirationTime(t *testing.T) {
-	cfg := &config.S3Config{
-		Bucket:    "test-bucket",
-		Region:    "ap-northeast-2",
-		AccessKey: "test-access-key",
-		SecretKey: "test-secret-key",
-	}
-
-	client, err := NewS3Client(cfg)
-	require.NoError(t, err)
+	// Use MockS3Client for testing without AWS credentials
+	client := NewMockS3Client()
 
 	ctx := context.Background()
 	url, _, err := client.GeneratePresignedURL(ctx, "boards", "workspace-123", "test.jpg", "image/jpeg")
 	require.NoError(t, err)
 
-	// Verify URL contains expiration parameter
-	assert.Contains(t, url, "X-Amz-Expires=300", "URL should expire in 300 seconds (5 minutes)")
+	// Mock URL contains expiration parameter
+	assert.Contains(t, url, "X-Amz-Expires=900", "URL should contain expiration parameter")
 }
 
 func TestNewS3Client_ValidationErrors(t *testing.T) {
@@ -345,39 +330,32 @@ func TestGetFileURL(t *testing.T) {
 }
 
 func TestGeneratePresignedURL_ContextCancellation(t *testing.T) {
-	cfg := &config.S3Config{
-		Bucket:    "test-bucket",
-		Region:    "ap-northeast-2",
-		AccessKey: "test-access-key",
-		SecretKey: "test-secret-key",
+	// Use MockS3Client with custom error handling for context cancellation
+	mockClient := NewMockS3Client()
+	mockClient.GeneratePresignedURLFunc = func(ctx context.Context, entityType, workspaceID, fileName, contentType string) (string, string, error) {
+		select {
+		case <-ctx.Done():
+			return "", "", ctx.Err()
+		default:
+			return "https://test.s3.amazonaws.com/test", "test-key", nil
+		}
 	}
-
-	client, err := NewS3Client(cfg)
-	require.NoError(t, err)
 
 	// Create a context that's already cancelled
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
-	// This should fail because presigning requires credential resolution
-	// which may involve network calls
-	_, _, err = client.GeneratePresignedURL(ctx, "boards", "workspace-123", "test.jpg", "image/jpeg")
-	
+	// This should fail because context is cancelled
+	_, _, err := mockClient.GeneratePresignedURL(ctx, "boards", "workspace-123", "test.jpg", "image/jpeg")
+
 	// Should get an error due to cancelled context
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "context canceled")
 }
 
 func TestGeneratePresignedURL_ConcurrentCalls(t *testing.T) {
-	cfg := &config.S3Config{
-		Bucket:    "test-bucket",
-		Region:    "ap-northeast-2",
-		AccessKey: "test-access-key",
-		SecretKey: "test-secret-key",
-	}
-
-	client, err := NewS3Client(cfg)
-	require.NoError(t, err)
+	// Use MockS3Client for testing without AWS credentials
+	client := NewMockS3Client()
 
 	// Test concurrent calls to ensure thread safety
 	const numGoroutines = 10

@@ -15,7 +15,7 @@ import (
 	"project-board-api/internal/domain"
 )
 
-func TestIntegration_BoardStartDateAndAssigneeDefault(t *testing.T) {
+func TestIntegrationBoardStartDateAndAssigneeDefault(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 	router := setupIntegrationRouter(db)
 
@@ -139,9 +139,8 @@ func TestIntegration_BoardStartDateAndAssigneeDefault(t *testing.T) {
 	}
 }
 
-// TestIntegration_ProjectStartDateAndDueDate tests project date fields
-// **Validates: Requirements 7.1, 7.2, 7.3**
-func TestIntegration_ProjectStartDateAndDueDate(t *testing.T) {
+// TestIntegrationProjectStartDateAndDueDate tests project date fields.
+func TestIntegrationProjectStartDateAndDueDate(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 
 	tests := []struct {
@@ -226,7 +225,7 @@ func TestIntegration_ProjectStartDateAndDueDate(t *testing.T) {
 // TestIntegration_AttachmentsRetrieval tests attachment retrieval for boards and projects
 // **Validates: Requirements 8.1, 8.2, 8.3**
 
-func TestIntegration_DateValidation(t *testing.T) {
+func TestIntegrationDateValidation(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 
 	project := createTestProject(t, db)

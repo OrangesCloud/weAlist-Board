@@ -1,3 +1,4 @@
+// Package client provides external service client implementations.
 package client
 
 import (

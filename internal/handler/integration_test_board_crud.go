@@ -16,7 +16,7 @@ import (
 	"project-board-api/internal/dto"
 )
 
-func TestIntegration_FullWorkflow(t *testing.T) {
+func TestIntegrationFullWorkflow(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 	router := setupIntegrationRouter(db)
 
@@ -77,7 +77,7 @@ func TestIntegration_FullWorkflow(t *testing.T) {
 // TestIntegration_BoardStartDateAndAssigneeDefault tests board startDate field and assigneeId default value
 // **Validates: Requirements 6.1, 6.2, 6.3, 6.4**
 
-func TestIntegration_CreateBoardWithParticipants(t *testing.T) {
+func TestIntegrationCreateBoardWithParticipants(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 	router := setupIntegrationRouter(db)
 
@@ -153,9 +153,8 @@ func TestIntegration_CreateBoardWithParticipants(t *testing.T) {
 	assert.Contains(t, dbUserIDs, participant3)
 }
 
-// TestIntegration_CreateBoardWithoutParticipants tests board creation without participants
-// **Validates: Requirements 1.3**
-func TestIntegration_CreateBoardWithoutParticipants(t *testing.T) {
+// TestIntegrationCreateBoardWithoutParticipants tests board creation without participants.
+func TestIntegrationCreateBoardWithoutParticipants(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 	router := setupIntegrationRouter(db)
 
@@ -228,9 +227,8 @@ func TestIntegration_CreateBoardWithoutParticipants(t *testing.T) {
 	}
 }
 
-// TestIntegration_CreateBoardValidationErrors tests validation errors for participants
-// **Validates: Requirements 3.1, 3.2**
-func TestIntegration_CreateBoardValidationErrors(t *testing.T) {
+// TestIntegrationCreateBoardValidationErrors tests validation errors for participants.
+func TestIntegrationCreateBoardValidationErrors(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 	router := setupIntegrationRouter(db)
 
@@ -318,9 +316,8 @@ func TestIntegration_CreateBoardValidationErrors(t *testing.T) {
 	}
 }
 
-// TestIntegration_CreateBoardDuplicateParticipants tests duplicate participant handling
-// **Validates: Requirements 1.4**
-func TestIntegration_CreateBoardDuplicateParticipants(t *testing.T) {
+// TestIntegrationCreateBoardDuplicateParticipants tests duplicate participant handling.
+func TestIntegrationCreateBoardDuplicateParticipants(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 	router := setupIntegrationRouter(db)
 

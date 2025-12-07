@@ -217,7 +217,7 @@ func TestPerformance_MetricsEndpointResponseTime(t *testing.T) {
 	iterations := 100
 	var totalDuration time.Duration
 	var maxDuration time.Duration
-	var minDuration time.Duration = time.Hour
+	var minDuration = time.Hour
 
 	for i := 0; i < iterations; i++ {
 		req := httptest.NewRequest("GET", "/metrics", nil)

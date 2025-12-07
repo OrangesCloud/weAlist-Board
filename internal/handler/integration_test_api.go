@@ -11,7 +11,7 @@ import (
 	"project-board-api/internal/domain"
 )
 
-func TestIntegration_AttachmentsRetrieval(t *testing.T) {
+func TestIntegrationAttachmentsRetrieval(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 
 	project := createTestProject(t, db)

@@ -1,3 +1,4 @@
+// Package handler provides HTTP request handlers for the API.
 package handler
 
 import (
@@ -9,19 +10,19 @@ import (
 
 // AttachmentHandler handles attachment-related requests
 type AttachmentHandler struct {
-	s3Client       *client.S3Client
+	s3Client       client.S3ClientInterface
 	attachmentRepo repository.AttachmentRepository
 }
 
 // NewAttachmentHandler creates a new AttachmentHandler
-func NewAttachmentHandler(s3Client *client.S3Client, attachmentRepo repository.AttachmentRepository) *AttachmentHandler {
+func NewAttachmentHandler(s3Client client.S3ClientInterface, attachmentRepo repository.AttachmentRepository) *AttachmentHandler {
 	return &AttachmentHandler{
 		s3Client:       s3Client,
 		attachmentRepo: attachmentRepo,
 	}
 }
 
-// File size limit: 50MB
+// MaxFileSize defines the maximum allowed file size for uploads (50MB).
 const MaxFileSize = 50 * 1024 * 1024
 
 var (

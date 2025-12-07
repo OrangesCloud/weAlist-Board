@@ -16,7 +16,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"project-board-api/internal/client"
-	"project-board-api/internal/config"
 	"project-board-api/internal/domain"
 )
 
@@ -80,24 +79,14 @@ func (m *mockAttachmentRepository) DeleteBatch(ctx context.Context, attachmentID
 func setupAttachmentHandler(t *testing.T) (*AttachmentHandler, *gin.Engine) {
 	gin.SetMode(gin.TestMode)
 
-	// Create S3 config for testing
-	cfg := &config.S3Config{
-		Bucket:    "test-bucket",
-		Region:    "us-east-1",
-		AccessKey: "test-access-key",
-		SecretKey: "test-secret-key",
-		Endpoint:  "", // Use real AWS SDK for testing
-	}
-
-	// Create S3 client
-	s3Client, err := client.NewS3Client(cfg)
-	require.NoError(t, err, "Failed to create S3 client")
+	// Use MockS3Client instead of real S3 client
+	mockS3Client := client.NewMockS3Client()
 
 	// Create mock repository
 	mockRepo := &mockAttachmentRepository{}
 
 	// Create handler
-	handler := NewAttachmentHandler(s3Client, mockRepo)
+	handler := NewAttachmentHandler(mockS3Client, mockRepo)
 
 	// Setup router with auth middleware
 	router := gin.New()

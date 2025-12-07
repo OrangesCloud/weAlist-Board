@@ -17,7 +17,7 @@ import (
 	"project-board-api/internal/dto"
 )
 
-func TestIntegration_AddParticipants_API(t *testing.T) {
+func TestIntegrationAddParticipantsAPI(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 	router := setupIntegrationRouter(db)
 
@@ -101,9 +101,8 @@ func TestIntegration_AddParticipants_API(t *testing.T) {
 	}
 }
 
-// TestIntegration_GetBoardsByProject_WithParticipants tests board list API with participant IDs
-// **Validates: Requirements 3.2, 3.3**
-func TestIntegration_GetBoardsByProject_WithParticipants(t *testing.T) {
+// TestIntegrationGetBoardsByProjectWithParticipants tests board list API with participant IDs.
+func TestIntegrationGetBoardsByProjectWithParticipants(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 	router := setupIntegrationRouter(db)
 
@@ -181,9 +180,8 @@ func TestIntegration_GetBoardsByProject_WithParticipants(t *testing.T) {
 	assert.Len(t, participantIDs2, 0, "Board2 should have 0 participants")
 }
 
-// TestIntegration_BackwardCompatibility_ResponseStructure tests that new fields don't break existing response structure
-// **Validates: Requirements 3.2, 3.3, 3.5**
-func TestIntegration_BackwardCompatibility_ResponseStructure(t *testing.T) {
+// TestIntegrationBackwardCompatibilityResponseStructure tests that new fields don't break existing response structure.
+func TestIntegrationBackwardCompatibilityResponseStructure(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 	router := setupIntegrationRouter(db)
 
@@ -233,9 +231,8 @@ func TestIntegration_BackwardCompatibility_ResponseStructure(t *testing.T) {
 	assert.Equal(t, board.ID.String(), boardData["boardId"].(string))
 }
 
-// TestIntegration_HTTPStatusCodes tests that correct HTTP status codes are returned
-// **Validates: Requirements 3.4**
-func TestIntegration_HTTPStatusCodes(t *testing.T) {
+// TestIntegrationHTTPStatusCodes tests that correct HTTP status codes are returned.
+func TestIntegrationHTTPStatusCodes(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 	router := setupIntegrationRouter(db)
 
@@ -305,9 +302,8 @@ func TestIntegration_HTTPStatusCodes(t *testing.T) {
 	}
 }
 
-// TestIntegration_ErrorResponseFormat tests that error responses maintain consistent format
-// **Validates: Requirements 3.5**
-func TestIntegration_ErrorResponseFormat(t *testing.T) {
+// TestIntegrationErrorResponseFormat tests that error responses maintain consistent format.
+func TestIntegrationErrorResponseFormat(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 	router := setupIntegrationRouter(db)
 
@@ -340,9 +336,8 @@ func TestIntegration_ErrorResponseFormat(t *testing.T) {
 	assert.Contains(t, errorData, "message", "Error should contain 'message' field")
 }
 
-// TestIntegration_PartialSuccess_DuplicateParticipants tests the 207 Multi-Status response
-// **Validates: Requirements 3.2, 3.4**
-func TestIntegration_PartialSuccess_DuplicateParticipants(t *testing.T) {
+// TestIntegrationPartialSuccessDuplicateParticipants tests the 207 Multi-Status response.
+func TestIntegrationPartialSuccessDuplicateParticipants(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 	router := setupIntegrationRouter(db)
 
@@ -395,9 +390,10 @@ func TestIntegration_PartialSuccess_DuplicateParticipants(t *testing.T) {
 	// Find the results for each user
 	var existingResult, newResult *dto.ParticipantResult
 	for i := range resp.Results {
-		if resp.Results[i].UserID == existingUserID {
+		switch resp.Results[i].UserID {
+		case existingUserID:
 			existingResult = &resp.Results[i]
-		} else if resp.Results[i].UserID == newUserID {
+		case newUserID:
 			newResult = &resp.Results[i]
 		}
 	}

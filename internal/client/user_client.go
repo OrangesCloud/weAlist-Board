@@ -15,7 +15,7 @@ import (
 	"project-board-api/internal/metrics"
 )
 
-// 💡 [추가] WebSocket 인증 응답 DTO
+// TokenValidationResponse represents the response from token validation for WebSocket authentication.
 type TokenValidationResponse struct {
 	UserID  string `json:"userId"`
 	Valid   bool   `json:"valid"`

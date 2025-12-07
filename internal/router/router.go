@@ -1,3 +1,4 @@
+// Package router provides HTTP routing configuration.
 package router
 
 import (
@@ -32,8 +33,7 @@ type Config struct {
 	S3Client           *client.S3Client
 }
 
-// gk
-// Setup initializes the router with all dependencies and routes
+// Setup initializes the router with all dependencies and routes.
 func Setup(cfg Config) *gin.Engine {
 	// Create Gin router
 	router := gin.New()

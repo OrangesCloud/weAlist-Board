@@ -1,3 +1,4 @@
+// Package dto provides data transfer objects for API requests and responses.
 package dto
 
 import (
@@ -82,8 +83,7 @@ type BoardResponse struct {
 	UpdatedAt      time.Time              `json:"updatedAt" example:"2024-01-15T14:20:00Z"`
 }
 
-// ghgh
-// PaginatedBoardsResponse represents paginated boards response
+// PaginatedBoardsResponse represents a paginated list of boards with metadata.
 type PaginatedBoardsResponse struct {
 	Boards []BoardResponse `json:"boards"`
 	Total  int64           `json:"total"`

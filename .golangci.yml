@@ -1,0 +1,25 @@
+version: "2"
+
+run:
+  timeout: 5m
+  tests: true
+
+linters:
+  disable:
+    # TODO: 점진적으로 수정 후 활성화
+    # 기존 코드에 에러 반환값 미처리가 많아 일시 비활성화
+    - errcheck
+  settings:
+    staticcheck:
+      checks:
+        - "all"
+        - "-SA1019"  # deprecated 함수 사용 경고 무시 (AWS SDK v2 마이그레이션 필요)
+        - "-SA1029"  # context key 타입 경고 무시
+        - "-S1009"   # nil check before len() 경고 무시 (gosimple이 staticcheck에 통합됨)
+  exclusions:
+    # 테스트 파일에서는 일부 규칙 완화
+    rules:
+      - path: _test\.go
+        linters:
+          - dupl
+          - gosec

@@ -1,5 +1,4 @@
-// internal/handler/auth_util.go (새 파일이라고 가정)
-
+// Package handler provides HTTP handler utilities.
 package handler
 
 import (

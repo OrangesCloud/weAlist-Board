@@ -1,3 +1,4 @@
+// Package domain provides domain models and entities for the application.
 package domain
 
 import (

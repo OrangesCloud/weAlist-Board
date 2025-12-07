@@ -17,8 +17,7 @@ import (
 	"project-board-api/internal/response"
 )
 
-// 💡 [추가] S3Client 인터페이스 정의: project_service.go가 이 타입을 사용하므로 정의가 필요합니다.
-// 이는 client.S3ClientInterface가 구현하는 메서드들을 포함해야 합니다.
+// S3Client defines the interface for S3 operations used by the project service.
 type S3Client interface {
 	GenerateFileKey(entityType, workspaceID, fileExt string) (string, error)
 	GeneratePresignedURL(ctx context.Context, entityType, workspaceID, fileName, contentType string) (string, string, error)
