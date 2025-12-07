@@ -293,9 +293,7 @@ func subscribeToRedis(projectID string, client *Client, log *zap.Logger) {
 	}
 }
 
-// ============================================================================
-// BroadcastEvent: 이벤트 브로드캐스트
-// ============================================================================
+// BroadcastEvent broadcasts a WebSocket event to all clients subscribed to the given project.
 func BroadcastEvent(projectID string, event WSEvent) {
 	payload, _ := json.Marshal(event)
 

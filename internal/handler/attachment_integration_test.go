@@ -97,7 +97,7 @@ func setupAttachmentIntegrationRouter(db *gorm.DB, s3Client client.S3ClientInter
 
 // TestIntegration_PresignedURL_BoardFlow tests the complete presigned URL flow for board attachments
 // **Validates: Requirements 1.3, 1.4, 1.5**
-func TestIntegration_PresignedURL_BoardFlow(t *testing.T) {
+func TestIntegrationPresignedURLBoardFlow(t *testing.T) {
 	db := setupAttachmentIntegrationTestDB(t)
 
 	// Use MockS3Client instead of real S3 client
@@ -252,7 +252,7 @@ func TestIntegration_PresignedURL_BoardFlow(t *testing.T) {
 
 // TestIntegration_PresignedURL_InvalidEntityType tests invalid entity type handling
 // **Validates: Requirements 1.1, 1.2**
-func TestIntegration_PresignedURL_InvalidEntityType(t *testing.T) {
+func TestIntegrationPresignedURLInvalidEntityType(t *testing.T) {
 	db := setupAttachmentIntegrationTestDB(t)
 
 	// Use MockS3Client instead of real S3 client
@@ -318,7 +318,7 @@ func TestIntegration_PresignedURL_InvalidEntityType(t *testing.T) {
 
 // TestIntegration_PresignedURL_FileTypeValidation tests file type validation
 // **Validates: Requirements 1.2, 1.5.2, 1.7.2**
-func TestIntegration_PresignedURL_FileTypeValidation(t *testing.T) {
+func TestIntegrationPresignedURLFileTypeValidation(t *testing.T) {
 	db := setupAttachmentIntegrationTestDB(t)
 
 	// Use MockS3Client instead of real S3 client
@@ -421,7 +421,7 @@ func TestIntegration_PresignedURL_FileTypeValidation(t *testing.T) {
 
 // TestIntegration_PresignedURL_FileSizeValidation tests file size validation
 // **Validates: Requirements 1.1, 2.1**
-func TestIntegration_PresignedURL_FileSizeValidation(t *testing.T) {
+func TestIntegrationPresignedURLFileSizeValidation(t *testing.T) {
 	db := setupAttachmentIntegrationTestDB(t)
 
 	// Use MockS3Client instead of real S3 client
@@ -509,7 +509,7 @@ func TestIntegration_PresignedURL_FileSizeValidation(t *testing.T) {
 
 // TestIntegration_PresignedURL_CompleteWorkflow tests the complete workflow from presigned URL generation
 // **Validates: Requirements 1.3, 1.4, 1.5**
-func TestIntegration_PresignedURL_CompleteWorkflow(t *testing.T) {
+func TestIntegrationPresignedURLCompleteWorkflow(t *testing.T) {
 	db := setupAttachmentIntegrationTestDB(t)
 
 	// Use MockS3Client instead of real S3 client

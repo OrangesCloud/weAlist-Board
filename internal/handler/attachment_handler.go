@@ -21,7 +21,7 @@ func NewAttachmentHandler(s3Client client.S3ClientInterface, attachmentRepo repo
 	}
 }
 
-// File size limit: 50MB
+// MaxFileSize defines the maximum allowed file size for uploads (50MB).
 const MaxFileSize = 50 * 1024 * 1024
 
 var (

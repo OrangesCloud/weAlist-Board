@@ -17,7 +17,7 @@ import (
 	"project-board-api/internal/dto"
 )
 
-func TestIntegration_AddParticipants_API(t *testing.T) {
+func TestIntegrationAddParticipantsAPI(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 	router := setupIntegrationRouter(db)
 
@@ -103,7 +103,7 @@ func TestIntegration_AddParticipants_API(t *testing.T) {
 
 // TestIntegration_GetBoardsByProject_WithParticipants tests board list API with participant IDs
 // **Validates: Requirements 3.2, 3.3**
-func TestIntegration_GetBoardsByProject_WithParticipants(t *testing.T) {
+func TestIntegrationGetBoardsByProjectWithParticipants(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 	router := setupIntegrationRouter(db)
 
@@ -183,7 +183,7 @@ func TestIntegration_GetBoardsByProject_WithParticipants(t *testing.T) {
 
 // TestIntegration_BackwardCompatibility_ResponseStructure tests that new fields don't break existing response structure
 // **Validates: Requirements 3.2, 3.3, 3.5**
-func TestIntegration_BackwardCompatibility_ResponseStructure(t *testing.T) {
+func TestIntegrationBackwardCompatibilityResponseStructure(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 	router := setupIntegrationRouter(db)
 
@@ -235,7 +235,7 @@ func TestIntegration_BackwardCompatibility_ResponseStructure(t *testing.T) {
 
 // TestIntegration_HTTPStatusCodes tests that correct HTTP status codes are returned
 // **Validates: Requirements 3.4**
-func TestIntegration_HTTPStatusCodes(t *testing.T) {
+func TestIntegrationHTTPStatusCodes(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 	router := setupIntegrationRouter(db)
 
@@ -307,7 +307,7 @@ func TestIntegration_HTTPStatusCodes(t *testing.T) {
 
 // TestIntegration_ErrorResponseFormat tests that error responses maintain consistent format
 // **Validates: Requirements 3.5**
-func TestIntegration_ErrorResponseFormat(t *testing.T) {
+func TestIntegrationErrorResponseFormat(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 	router := setupIntegrationRouter(db)
 
@@ -342,7 +342,7 @@ func TestIntegration_ErrorResponseFormat(t *testing.T) {
 
 // TestIntegration_PartialSuccess_DuplicateParticipants tests the 207 Multi-Status response
 // **Validates: Requirements 3.2, 3.4**
-func TestIntegration_PartialSuccess_DuplicateParticipants(t *testing.T) {
+func TestIntegrationPartialSuccessDuplicateParticipants(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 	router := setupIntegrationRouter(db)
 

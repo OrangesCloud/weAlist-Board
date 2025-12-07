@@ -184,7 +184,7 @@ func setupFullFlowRouter(
 
 // TestIntegration_CompleteAttachmentFlow tests the complete attachment flow
 // **Validates: Requirements 7.1, 7.2, 7.3, 7.4, 8.1, 8.2, 8.3, 9.3**
-func TestIntegration_CompleteAttachmentFlow(t *testing.T) {
+func TestIntegrationCompleteAttachmentFlow(t *testing.T) {
 	db := setupFullFlowTestDB(t)
 
 	// Use MockS3Client instead of real S3 client
@@ -448,7 +448,7 @@ func TestIntegration_CompleteAttachmentFlow(t *testing.T) {
 
 // TestIntegration_MultipleAttachmentsFlow tests creating a board with multiple attachments
 // **Validates: Requirements 8.1, 8.2, 8.3**
-func TestIntegration_MultipleAttachmentsFlow(t *testing.T) {
+func TestIntegrationMultipleAttachmentsFlow(t *testing.T) {
 	db := setupFullFlowTestDB(t)
 
 	// Use MockS3Client instead of real S3 client
@@ -561,7 +561,7 @@ func TestIntegration_MultipleAttachmentsFlow(t *testing.T) {
 
 // TestIntegration_AttachmentValidationErrors tests error scenarios
 // **Validates: Requirements 8.2**
-func TestIntegration_AttachmentValidationErrors(t *testing.T) {
+func TestIntegrationAttachmentValidationErrors(t *testing.T) {
 	db := setupFullFlowTestDB(t)
 
 	// Use MockS3Client instead of real S3 client
