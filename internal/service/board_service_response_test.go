@@ -16,7 +16,7 @@ import (
 func TestBoardService_toBoardResponse_ParticipantIDs(t *testing.T) {
 	user1ID := uuid.New()
 	user2ID := uuid.New()
-	
+
 	tests := []struct {
 		name             string
 		board            *domain.Board
@@ -61,7 +61,7 @@ func TestBoardService_toBoardResponse_ParticipantIDs(t *testing.T) {
 			mockProjectRepo := &MockProjectRepository{}
 			mockFieldOptionRepo := &MockFieldOptionRepository{}
 			mockConverter := &MockFieldOptionConverter{}
-			
+
 			mockParticipantRepo := &MockParticipantRepository{}
 			logger, _ := zap.NewDevelopment()
 			service := NewBoardService(mockBoardRepo, mockProjectRepo, mockFieldOptionRepo, mockParticipantRepo, &MockAttachmentRepository{}, nil, mockConverter, nil, logger).(*boardServiceImpl)
@@ -74,16 +74,16 @@ func TestBoardService_toBoardResponse_ParticipantIDs(t *testing.T) {
 				t.Error("ParticipantIDs is nil, want non-nil slice")
 				return
 			}
-			
+
 			if len(response.ParticipantIDs) != len(tt.wantParticipants) {
-				t.Errorf("ParticipantIDs count = %d, want %d", 
+				t.Errorf("ParticipantIDs count = %d, want %d",
 					len(response.ParticipantIDs), len(tt.wantParticipants))
 				return
 			}
-			
+
 			for i, expectedID := range tt.wantParticipants {
 				if response.ParticipantIDs[i] != expectedID {
-					t.Errorf("ParticipantIDs[%d] = %v, want %v", 
+					t.Errorf("ParticipantIDs[%d] = %v, want %v",
 						i, response.ParticipantIDs[i], expectedID)
 				}
 			}
@@ -99,13 +99,13 @@ func TestBoardService_toBoardResponse_Attachments(t *testing.T) {
 	mockConverter := &MockFieldOptionConverter{}
 
 	mockParticipantRepo := &MockParticipantRepository{}
-			logger, _ := zap.NewDevelopment()
-			service := NewBoardService(mockBoardRepo, mockProjectRepo, mockFieldOptionRepo, mockParticipantRepo, &MockAttachmentRepository{}, &MockS3Client{}, mockConverter, nil, logger)
+	logger, _ := zap.NewDevelopment()
+	service := NewBoardService(mockBoardRepo, mockProjectRepo, mockFieldOptionRepo, mockParticipantRepo, &MockAttachmentRepository{}, &MockS3Client{}, mockConverter, nil, logger)
 	boardService := service.(*boardServiceImpl)
 
 	tests := []struct {
-		name        string
-		board       *domain.Board
+		name            string
+		board           *domain.Board
 		wantAttachments int
 	}{
 		{
@@ -239,11 +239,11 @@ func TestBoardService_toBoardResponse_Attachments(t *testing.T) {
 func TestCreateBoard_DateValidation(t *testing.T) {
 	projectID := uuid.New()
 	userID := uuid.New()
-	
+
 	// Create test dates
 	startDate := time.Date(2024, 12, 31, 0, 0, 0, 0, time.UTC)
 	dueDate := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC) // Before start date
-	
+
 	mockProjectRepo := &MockProjectRepository{
 		FindByIDFunc: func(ctx context.Context, id uuid.UUID) (*domain.Project, error) {
 			return &domain.Project{
@@ -251,17 +251,17 @@ func TestCreateBoard_DateValidation(t *testing.T) {
 			}, nil
 		},
 	}
-	
+
 	mockBoardRepo := &MockBoardRepository{}
 	mockFieldOptionRepo := &MockFieldOptionRepository{}
 	mockConverter := &MockFieldOptionConverter{}
-	
+
 	mockParticipantRepo := &MockParticipantRepository{}
-			logger, _ := zap.NewDevelopment()
-			service := NewBoardService(mockBoardRepo, mockProjectRepo, mockFieldOptionRepo, mockParticipantRepo, &MockAttachmentRepository{}, nil, mockConverter, nil, logger)
-	
+	logger, _ := zap.NewDevelopment()
+	service := NewBoardService(mockBoardRepo, mockProjectRepo, mockFieldOptionRepo, mockParticipantRepo, &MockAttachmentRepository{}, nil, mockConverter, nil, logger)
+
 	ctx := context.WithValue(context.Background(), "user_id", userID)
-	
+
 	req := &dto.CreateBoardRequest{
 		ProjectID: projectID,
 		Title:     "Test Board",
@@ -269,23 +269,23 @@ func TestCreateBoard_DateValidation(t *testing.T) {
 		StartDate: &startDate,
 		DueDate:   &dueDate,
 	}
-	
+
 	// Should return validation error
 	_, err := service.CreateBoard(ctx, req)
-	
+
 	if err == nil {
 		t.Fatal("Expected validation error, got nil")
 	}
-	
+
 	appErr, ok := err.(*response.AppError)
 	if !ok {
 		t.Fatalf("Expected AppError, got %T", err)
 	}
-	
+
 	if appErr.Code != response.ErrCodeValidation {
 		t.Errorf("Expected error code %s, got %s", response.ErrCodeValidation, appErr.Code)
 	}
-	
+
 	if appErr.Message != "Start date cannot be after due date" {
 		t.Errorf("Expected error message 'Start date cannot be after due date', got '%s'", appErr.Message)
 	}
@@ -296,11 +296,11 @@ func TestCreateBoard_ValidDateRange(t *testing.T) {
 	projectID := uuid.New()
 	userID := uuid.New()
 	boardID := uuid.New()
-	
+
 	// Create test dates - valid range
 	startDate := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
 	dueDate := time.Date(2024, 12, 31, 0, 0, 0, 0, time.UTC)
-	
+
 	mockProjectRepo := &MockProjectRepository{
 		FindByIDFunc: func(ctx context.Context, id uuid.UUID) (*domain.Project, error) {
 			return &domain.Project{
@@ -308,27 +308,27 @@ func TestCreateBoard_ValidDateRange(t *testing.T) {
 			}, nil
 		},
 	}
-	
+
 	mockBoardRepo := &MockBoardRepository{
 		CreateFunc: func(ctx context.Context, board *domain.Board) error {
 			board.ID = boardID
 			return nil
 		},
 	}
-	
+
 	mockFieldOptionRepo := &MockFieldOptionRepository{}
 	mockConverter := &MockFieldOptionConverter{
 		ConvertValuesToIDsFunc: func(ctx context.Context, projectID uuid.UUID, customFields map[string]interface{}) (map[string]interface{}, error) {
 			return customFields, nil
 		},
 	}
-	
+
 	mockParticipantRepo := &MockParticipantRepository{}
-			logger, _ := zap.NewDevelopment()
-			service := NewBoardService(mockBoardRepo, mockProjectRepo, mockFieldOptionRepo, mockParticipantRepo, &MockAttachmentRepository{}, nil, mockConverter, nil, logger)
-	
+	logger, _ := zap.NewDevelopment()
+	service := NewBoardService(mockBoardRepo, mockProjectRepo, mockFieldOptionRepo, mockParticipantRepo, &MockAttachmentRepository{}, nil, mockConverter, nil, logger)
+
 	ctx := context.WithValue(context.Background(), "user_id", userID)
-	
+
 	req := &dto.CreateBoardRequest{
 		ProjectID: projectID,
 		Title:     "Test Board",
@@ -336,22 +336,22 @@ func TestCreateBoard_ValidDateRange(t *testing.T) {
 		StartDate: &startDate,
 		DueDate:   &dueDate,
 	}
-	
+
 	// Should succeed
 	result, err := service.CreateBoard(ctx, req)
-	
+
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
-	
+
 	if result == nil {
 		t.Fatal("Expected result, got nil")
 	}
-	
+
 	if result.StartDate == nil || !result.StartDate.Equal(startDate) {
 		t.Errorf("Expected start date %v, got %v", startDate, result.StartDate)
 	}
-	
+
 	if result.DueDate == nil || !result.DueDate.Equal(dueDate) {
 		t.Errorf("Expected due date %v, got %v", dueDate, result.DueDate)
 	}

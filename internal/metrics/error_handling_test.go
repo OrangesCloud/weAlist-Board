@@ -19,7 +19,7 @@ import (
 // the error should be logged and the operation should continue without crashing
 func TestProperty11_MetricCollectionErrorHandling(t *testing.T) {
 	logger, _ := zap.NewDevelopment()
-	
+
 	tests := []struct {
 		name      string
 		operation func(*Metrics)

@@ -19,7 +19,11 @@ VERSION?=$(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
 BUILD_TIME=$(shell date -u '+%Y-%m-%d_%H:%M:%S')
 LDFLAGS=-ldflags "-X main.Version=$(VERSION) -X main.BuildTime=$(BUILD_TIME)"
 
-.PHONY: help build run test lint clean migrate-up migrate-down docker-build docker-run
+.PHONY: help build build-linux run dev test test-short test-coverage test-coverage-text \
+	lint fmt vet check deps deps-upgrade clean \
+	db-create db-drop db-reset \
+	docker-build docker-build-dev docker-run docker-run-interactive docker-stop docker-logs docker-clean \
+	install-tools swagger all
 
 ## help: Display this help screen
 help:
@@ -122,43 +126,6 @@ clean:
 	@go clean -cache -testcache -modcache
 	@echo "✓ Clean complete"
 
-## migrate-up: Run database migrations up
-migrate-up:
-	@echo "Running migrations up..."
-	@if [ ! -f migrations/001_init_schema.sql ]; then \
-		echo "Error: Migration file not found"; \
-		exit 1; \
-	fi
-	@PGPASSWORD=$(DB_PASSWORD) psql -h $(DB_HOST) -p $(DB_PORT) -U $(DB_USER) -d $(DB_NAME) -f migrations/001_init_schema.sql
-	@if [ -f migrations/002_add_project_members_and_board_fields.sql ]; then \
-		PGPASSWORD=$(DB_PASSWORD) psql -h $(DB_HOST) -p $(DB_PORT) -U $(DB_USER) -d $(DB_NAME) -f migrations/002_add_project_members_and_board_fields.sql; \
-	fi
-	@if [ -f migrations/003_migrate_existing_project_owners.sql ]; then \
-		PGPASSWORD=$(DB_PASSWORD) psql -h $(DB_HOST) -p $(DB_PORT) -U $(DB_USER) -d $(DB_NAME) -f migrations/003_migrate_existing_project_owners.sql; \
-	fi
-	@echo "✓ Migrations applied"
-
-## migrate-down: Run database migrations down
-migrate-down:
-	@echo "Running migrations down..."
-	@if [ -f migrations/003_migrate_existing_project_owners_down.sql ]; then \
-		PGPASSWORD=$(DB_PASSWORD) psql -h $(DB_HOST) -p $(DB_PORT) -U $(DB_USER) -d $(DB_NAME) -f migrations/003_migrate_existing_project_owners_down.sql; \
-	fi
-	@if [ -f migrations/002_add_project_members_and_board_fields_down.sql ]; then \
-		PGPASSWORD=$(DB_PASSWORD) psql -h $(DB_HOST) -p $(DB_PORT) -U $(DB_USER) -d $(DB_NAME) -f migrations/002_add_project_members_and_board_fields_down.sql; \
-	fi
-	@if [ ! -f migrations/001_init_schema_down.sql ]; then \
-		echo "Error: Migration down file not found"; \
-		exit 1; \
-	fi
-	@PGPASSWORD=$(DB_PASSWORD) psql -h $(DB_HOST) -p $(DB_PORT) -U $(DB_USER) -d $(DB_NAME) -f migrations/001_init_schema_down.sql
-	@echo "✓ Migrations rolled back"
-
-## migrate-status: Check migration status
-migrate-status:
-	@echo "Checking database connection..."
-	@PGPASSWORD=$(DB_PASSWORD) psql -h $(DB_HOST) -p $(DB_PORT) -U $(DB_USER) -d $(DB_NAME) -c "\dt" || echo "Cannot connect to database"
-
 ## db-create: Create database
 db-create:
 	@echo "Creating database $(DB_NAME)..."
@@ -177,20 +144,20 @@ db-drop:
 		echo "Cancelled"; \
 	fi
 
-## db-reset: Drop, create, and migrate database
-db-reset: db-drop db-create migrate-up
+## db-reset: Drop and recreate database
+db-reset: db-drop db-create
 	@echo "✓ Database reset complete"
 
 ## docker-build: Build Docker image
 docker-build:
 	@echo "Building Docker image..."
-	@docker build -t $(DOCKER_IMAGE) .
+	@docker build -t $(DOCKER_IMAGE) -f docker/Dockerfile .
 	@echo "✓ Docker image built: $(DOCKER_IMAGE)"
 
 ## docker-build-dev: Build Docker image for development
 docker-build-dev:
 	@echo "Building development Docker image..."
-	@docker build -t $(DOCKER_IMAGE_DEV) --target builder .
+	@docker build -t $(DOCKER_IMAGE_DEV) -f docker/Dockerfile --target builder .
 	@echo "✓ Development Docker image built: $(DOCKER_IMAGE_DEV)"
 
 ## docker-run: Run Docker container
@@ -221,22 +188,6 @@ docker-stop:
 ## docker-logs: View Docker container logs
 docker-logs:
 	@docker logs -f $(APP_NAME)
-
-## docker-compose-up: Start services with docker-compose
-docker-compose-up:
-	@echo "Starting services with docker-compose..."
-	@docker-compose up -d
-	@echo "✓ Services started"
-
-## docker-compose-down: Stop services with docker-compose
-docker-compose-down:
-	@echo "Stopping services with docker-compose..."
-	@docker-compose down
-	@echo "✓ Services stopped"
-
-## docker-compose-logs: View docker-compose logs
-docker-compose-logs:
-	@docker-compose logs -f
 
 ## docker-clean: Remove Docker images and containers
 docker-clean:

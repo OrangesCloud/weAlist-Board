@@ -163,7 +163,7 @@ func TestErrorResponseConsistency(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Given
 			router, method, url, body := tt.setupHandler()
-			
+
 			var req *http.Request
 			if body != nil {
 				req = httptest.NewRequest(method, url, bytes.NewBuffer(body))
@@ -221,7 +221,7 @@ func TestErrorResponseConsistency(t *testing.T) {
 				t.Error("RequestID is missing in error response")
 			}
 
-			t.Logf("✓ Error response format is consistent: {\"error\": {\"code\": \"%s\", \"message\": \"%s\"}, \"requestId\": \"%s\"}", 
+			t.Logf("✓ Error response format is consistent: {\"error\": {\"code\": \"%s\", \"message\": \"%s\"}, \"requestId\": \"%s\"}",
 				code, message, errorResp.RequestID)
 		})
 	}
@@ -275,7 +275,7 @@ func TestSuccessResponseConsistency(t *testing.T) {
 				handler := NewFieldOptionHandler(mockService)
 				router := setupTestRouter()
 				router.POST("/api/field-options", handler.CreateFieldOption)
-				
+
 				reqBody := dto.CreateFieldOptionRequest{
 					FieldType:    "stage",
 					Value:        "custom",
@@ -303,7 +303,7 @@ func TestSuccessResponseConsistency(t *testing.T) {
 				handler := NewBoardHandler(mockService)
 				router := setupTestRouter()
 				router.POST("/api/boards", handler.CreateBoard)
-				
+
 				reqBody := dto.CreateBoardRequest{
 					ProjectID: uuid.New(),
 					Title:     "Test Board",
@@ -344,7 +344,7 @@ func TestSuccessResponseConsistency(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Given
 			router, method, url, body := tt.setupHandler()
-			
+
 			var req *http.Request
 			if body != nil {
 				req = httptest.NewRequest(method, url, bytes.NewBuffer(body))

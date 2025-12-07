@@ -106,7 +106,7 @@ func (h *CommentHandler) GetCommentsByQuery(c *gin.Context) {
 		response.SendError(c, http.StatusBadRequest, response.ErrCodeValidation, "Board ID is required")
 		return
 	}
-	
+
 	boardID, err := uuid.Parse(boardIDStr)
 	if err != nil {
 		response.SendError(c, http.StatusBadRequest, response.ErrCodeValidation, "Invalid board ID")

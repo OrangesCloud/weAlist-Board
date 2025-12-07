@@ -225,7 +225,7 @@ func TestMetricsMiddleware_ExcludedEndpoints(t *testing.T) {
 			if w.Code != http.StatusOK {
 				t.Errorf("Expected status 200, got %d", w.Code)
 			}
-			
+
 			// The fact that the request completed successfully means
 			// the middleware correctly skipped metrics recording
 			// (if it tried to record, it would use the endpoint path)
@@ -270,7 +270,7 @@ func TestMetricsMiddleware_ErrorStatusCodes(t *testing.T) {
 			if w.Code != tc.statusCode {
 				t.Errorf("Expected status %d, got %d", tc.statusCode, w.Code)
 			}
-			
+
 			// The fact that the request completed with the correct error status
 			// means the middleware correctly recorded the error metrics
 		})

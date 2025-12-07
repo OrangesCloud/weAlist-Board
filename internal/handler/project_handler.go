@@ -142,7 +142,7 @@ func (h *ProjectHandler) GetProjectsByWorkspaceQuery(c *gin.Context) {
 		response.SendError(c, http.StatusBadRequest, response.ErrCodeValidation, "Workspace ID is required")
 		return
 	}
-	
+
 	workspaceID, err := uuid.Parse(workspaceIDStr)
 	if err != nil {
 		response.SendError(c, http.StatusBadRequest, response.ErrCodeValidation, "Invalid workspace ID")

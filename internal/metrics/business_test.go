@@ -9,7 +9,7 @@ import (
 
 func TestIncrementProjectCreated(t *testing.T) {
 	m := getTestMetrics()
-	
+
 	// Get initial value
 	initialValue := getCounterValue(t, m.ProjectCreatedTotal)
 
@@ -25,7 +25,7 @@ func TestIncrementProjectCreated(t *testing.T) {
 
 func TestIncrementBoardCreated(t *testing.T) {
 	m := getTestMetrics()
-	
+
 	// Get initial value
 	initialValue := getCounterValue(t, m.BoardCreatedTotal)
 
@@ -41,7 +41,7 @@ func TestIncrementBoardCreated(t *testing.T) {
 
 func TestSetProjectsTotal(t *testing.T) {
 	m := getTestMetrics()
-	
+
 	tests := []struct {
 		name  string
 		count int64
@@ -65,7 +65,7 @@ func TestSetProjectsTotal(t *testing.T) {
 
 func TestSetBoardsTotal(t *testing.T) {
 	m := getTestMetrics()
-	
+
 	tests := []struct {
 		name  string
 		count int64
@@ -89,7 +89,7 @@ func TestSetBoardsTotal(t *testing.T) {
 
 func TestBusinessMetricsIntegration(t *testing.T) {
 	m := getTestMetrics()
-	
+
 	// Set initial totals
 	m.SetProjectsTotal(10)
 	m.SetBoardsTotal(50)

@@ -158,7 +158,7 @@ func TestProjectHandler_CreateProject(t *testing.T) {
 			handler := NewProjectHandler(mockService)
 
 			router := setupTestRouter()
-			
+
 			// Add middleware to set context values
 			if tt.setContext {
 				router.Use(func(c *gin.Context) {
@@ -168,7 +168,7 @@ func TestProjectHandler_CreateProject(t *testing.T) {
 					c.Next()
 				})
 			}
-			
+
 			router.POST("/api/projects", handler.CreateProject)
 
 			body, _ := json.Marshal(tt.requestBody)
@@ -183,7 +183,7 @@ func TestProjectHandler_CreateProject(t *testing.T) {
 			if w.Code != tt.expectedStatus {
 				t.Errorf("CreateProject() status = %v, want %v", w.Code, tt.expectedStatus)
 			}
-			
+
 			// Verify response structure includes requestId
 			if tt.expectedStatus == http.StatusCreated {
 				var resp map[string]interface{}
@@ -269,7 +269,7 @@ func TestProjectHandler_GetProjectsByWorkspace(t *testing.T) {
 			handler := NewProjectHandler(mockService)
 
 			router := setupTestRouter()
-			
+
 			// Add middleware to set context values
 			if tt.setContext {
 				router.Use(func(c *gin.Context) {
@@ -279,7 +279,7 @@ func TestProjectHandler_GetProjectsByWorkspace(t *testing.T) {
 					c.Next()
 				})
 			}
-			
+
 			router.GET("/api/projects/workspace/:workspaceId", handler.GetProjectsByWorkspace)
 
 			req := httptest.NewRequest(http.MethodGet, "/api/projects/workspace/"+tt.workspaceID, nil)
@@ -292,7 +292,7 @@ func TestProjectHandler_GetProjectsByWorkspace(t *testing.T) {
 			if w.Code != tt.expectedStatus {
 				t.Errorf("GetProjectsByWorkspace() status = %v, want %v", w.Code, tt.expectedStatus)
 			}
-			
+
 			// Verify response structure includes requestId
 			if tt.expectedStatus == http.StatusOK {
 				var resp map[string]interface{}
@@ -371,7 +371,7 @@ func TestProjectHandler_GetDefaultProject(t *testing.T) {
 			handler := NewProjectHandler(mockService)
 
 			router := setupTestRouter()
-			
+
 			// Add middleware to set context values
 			if tt.setContext {
 				router.Use(func(c *gin.Context) {
@@ -381,7 +381,7 @@ func TestProjectHandler_GetDefaultProject(t *testing.T) {
 					c.Next()
 				})
 			}
-			
+
 			router.GET("/api/projects/workspace/:workspaceId/default", handler.GetDefaultProject)
 
 			req := httptest.NewRequest(http.MethodGet, "/api/projects/workspace/"+tt.workspaceID+"/default", nil)
@@ -394,7 +394,7 @@ func TestProjectHandler_GetDefaultProject(t *testing.T) {
 			if w.Code != tt.expectedStatus {
 				t.Errorf("GetDefaultProject() status = %v, want %v", w.Code, tt.expectedStatus)
 			}
-			
+
 			// Verify response structure includes requestId
 			if tt.expectedStatus == http.StatusOK {
 				var resp map[string]interface{}
@@ -517,4 +517,3 @@ func TestProjectHandler_GetProject(t *testing.T) {
 		})
 	}
 }
-

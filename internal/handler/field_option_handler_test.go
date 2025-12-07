@@ -17,10 +17,10 @@ import (
 
 // MockFieldOptionService is a mock implementation of FieldOptionService
 type MockFieldOptionService struct {
-	GetFieldOptionsFunc    func(ctx context.Context, fieldType domain.FieldType) ([]*dto.FieldOptionResponse, error)
-	CreateFieldOptionFunc  func(ctx context.Context, req *dto.CreateFieldOptionRequest) (*dto.FieldOptionResponse, error)
-	UpdateFieldOptionFunc  func(ctx context.Context, optionID uuid.UUID, req *dto.UpdateFieldOptionRequest) (*dto.FieldOptionResponse, error)
-	DeleteFieldOptionFunc  func(ctx context.Context, optionID uuid.UUID) error
+	GetFieldOptionsFunc   func(ctx context.Context, fieldType domain.FieldType) ([]*dto.FieldOptionResponse, error)
+	CreateFieldOptionFunc func(ctx context.Context, req *dto.CreateFieldOptionRequest) (*dto.FieldOptionResponse, error)
+	UpdateFieldOptionFunc func(ctx context.Context, optionID uuid.UUID, req *dto.UpdateFieldOptionRequest) (*dto.FieldOptionResponse, error)
+	DeleteFieldOptionFunc func(ctx context.Context, optionID uuid.UUID) error
 }
 
 func (m *MockFieldOptionService) GetFieldOptions(ctx context.Context, fieldType domain.FieldType) ([]*dto.FieldOptionResponse, error) {
@@ -95,13 +95,13 @@ func TestFieldOptionHandler_GetFieldOptions(t *testing.T) {
 				if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
 					t.Fatalf("Failed to unmarshal response: %v", err)
 				}
-				
+
 				dataBytes, _ := json.Marshal(resp.Data)
 				var options []*dto.FieldOptionResponse
 				if err := json.Unmarshal(dataBytes, &options); err != nil {
 					t.Fatalf("Failed to unmarshal data: %v", err)
 				}
-				
+
 				if len(options) != 2 {
 					t.Errorf("Expected 2 options, got %d", len(options))
 				}
@@ -140,12 +140,12 @@ func TestFieldOptionHandler_GetFieldOptions(t *testing.T) {
 				if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
 					t.Fatalf("Failed to unmarshal response: %v", err)
 				}
-				
+
 				errorData, ok := resp.Error.(map[string]interface{})
 				if !ok {
 					t.Fatal("Error field is not a map")
 				}
-				
+
 				if errorData["code"] != response.ErrCodeValidation {
 					t.Errorf("Expected error code '%s', got '%s'", response.ErrCodeValidation, errorData["code"])
 				}
@@ -161,12 +161,12 @@ func TestFieldOptionHandler_GetFieldOptions(t *testing.T) {
 				if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
 					t.Fatalf("Failed to unmarshal response: %v", err)
 				}
-				
+
 				errorData, ok := resp.Error.(map[string]interface{})
 				if !ok {
 					t.Fatal("Error field is not a map")
 				}
-				
+
 				if errorData["code"] != response.ErrCodeValidation {
 					t.Errorf("Expected error code '%s', got '%s'", response.ErrCodeValidation, errorData["code"])
 				}
@@ -180,7 +180,7 @@ func TestFieldOptionHandler_GetFieldOptions(t *testing.T) {
 			mockService := &MockFieldOptionService{}
 			tt.mockService(mockService)
 			handler := NewFieldOptionHandler(mockService)
-			
+
 			router := setupTestRouter()
 			router.GET("/api/field-options", handler.GetFieldOptions)
 
@@ -198,7 +198,7 @@ func TestFieldOptionHandler_GetFieldOptions(t *testing.T) {
 			if w.Code != tt.expectedStatus {
 				t.Errorf("GetFieldOptions() status = %v, want %v", w.Code, tt.expectedStatus)
 			}
-			
+
 			if tt.checkResponse != nil {
 				tt.checkResponse(t, w)
 			}
@@ -244,13 +244,13 @@ func TestFieldOptionHandler_CreateFieldOption(t *testing.T) {
 				if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
 					t.Fatalf("Failed to unmarshal response: %v", err)
 				}
-				
+
 				dataBytes, _ := json.Marshal(resp.Data)
 				var option dto.FieldOptionResponse
 				if err := json.Unmarshal(dataBytes, &option); err != nil {
 					t.Fatalf("Failed to unmarshal data: %v", err)
 				}
-				
+
 				if option.Value != "custom_stage" {
 					t.Errorf("Expected value 'custom_stage', got '%s'", option.Value)
 				}
@@ -285,12 +285,12 @@ func TestFieldOptionHandler_CreateFieldOption(t *testing.T) {
 				if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
 					t.Fatalf("Failed to unmarshal response: %v", err)
 				}
-				
+
 				errorData, ok := resp.Error.(map[string]interface{})
 				if !ok {
 					t.Fatal("Error field is not a map")
 				}
-				
+
 				if errorData["code"] != response.ErrCodeValidation {
 					t.Errorf("Expected error code '%s', got '%s'", response.ErrCodeValidation, errorData["code"])
 				}
@@ -304,7 +304,7 @@ func TestFieldOptionHandler_CreateFieldOption(t *testing.T) {
 			mockService := &MockFieldOptionService{}
 			tt.mockService(mockService)
 			handler := NewFieldOptionHandler(mockService)
-			
+
 			router := setupTestRouter()
 			router.POST("/api/field-options", handler.CreateFieldOption)
 
@@ -320,7 +320,7 @@ func TestFieldOptionHandler_CreateFieldOption(t *testing.T) {
 			if w.Code != tt.expectedStatus {
 				t.Errorf("CreateFieldOption() status = %v, want %v", w.Code, tt.expectedStatus)
 			}
-			
+
 			if tt.checkResponse != nil {
 				tt.checkResponse(t, w)
 			}
@@ -369,13 +369,13 @@ func TestFieldOptionHandler_UpdateFieldOption(t *testing.T) {
 				if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
 					t.Fatalf("Failed to unmarshal response: %v", err)
 				}
-				
+
 				dataBytes, _ := json.Marshal(resp.Data)
 				var option dto.FieldOptionResponse
 				if err := json.Unmarshal(dataBytes, &option); err != nil {
 					t.Fatalf("Failed to unmarshal data: %v", err)
 				}
-				
+
 				if option.Label != newLabel {
 					t.Errorf("Expected label '%s', got '%s'", newLabel, option.Label)
 				}
@@ -409,7 +409,7 @@ func TestFieldOptionHandler_UpdateFieldOption(t *testing.T) {
 			mockService := &MockFieldOptionService{}
 			tt.mockService(mockService)
 			handler := NewFieldOptionHandler(mockService)
-			
+
 			router := setupTestRouter()
 			router.PATCH("/api/field-options/:optionId", handler.UpdateFieldOption)
 
@@ -425,7 +425,7 @@ func TestFieldOptionHandler_UpdateFieldOption(t *testing.T) {
 			if w.Code != tt.expectedStatus {
 				t.Errorf("UpdateFieldOption() status = %v, want %v", w.Code, tt.expectedStatus)
 			}
-			
+
 			if tt.checkResponse != nil {
 				tt.checkResponse(t, w)
 			}
@@ -483,16 +483,16 @@ func TestFieldOptionHandler_DeleteFieldOption(t *testing.T) {
 				if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
 					t.Fatalf("Failed to unmarshal response: %v", err)
 				}
-				
+
 				errorData, ok := resp.Error.(map[string]interface{})
 				if !ok {
 					t.Fatal("Error field is not a map")
 				}
-				
+
 				if errorData["code"] != response.ErrCodeValidation {
 					t.Errorf("Expected error code '%s', got '%s'", response.ErrCodeValidation, errorData["code"])
 				}
-				
+
 				message, ok := errorData["message"].(string)
 				if !ok || message != "Cannot delete system default field option" {
 					t.Errorf("Expected message about system default, got '%v'", errorData["message"])
@@ -507,7 +507,7 @@ func TestFieldOptionHandler_DeleteFieldOption(t *testing.T) {
 			mockService := &MockFieldOptionService{}
 			tt.mockService(mockService)
 			handler := NewFieldOptionHandler(mockService)
-			
+
 			router := setupTestRouter()
 			router.DELETE("/api/field-options/:optionId", handler.DeleteFieldOption)
 
@@ -521,7 +521,7 @@ func TestFieldOptionHandler_DeleteFieldOption(t *testing.T) {
 			if w.Code != tt.expectedStatus {
 				t.Errorf("DeleteFieldOption() status = %v, want %v", w.Code, tt.expectedStatus)
 			}
-			
+
 			if tt.checkResponse != nil {
 				tt.checkResponse(t, w)
 			}

@@ -22,7 +22,7 @@ func TestBoardService_UpdateBoard(t *testing.T) {
 		"stage":      "approved",
 		"importance": "normal",
 	}
-	
+
 	tests := []struct {
 		name        string
 		boardID     uuid.UUID
@@ -119,7 +119,7 @@ func TestBoardService_UpdateBoard(t *testing.T) {
 			mockFieldOptionRepo := &MockFieldOptionRepository{}
 			mockConverter := &MockFieldOptionConverter{}
 			tt.mockBoard(mockBoardRepo)
-			
+
 			mockParticipantRepo := &MockParticipantRepository{}
 			logger, _ := zap.NewDevelopment()
 			service := NewBoardService(mockBoardRepo, mockProjectRepo, mockFieldOptionRepo, mockParticipantRepo, &MockAttachmentRepository{}, nil, mockConverter, nil, logger)
@@ -157,12 +157,12 @@ func TestBoardService_UpdateBoard(t *testing.T) {
 
 func TestBoardService_UpdateBoard_CustomFields(t *testing.T) {
 	boardID := uuid.New()
-	
+
 	tests := []struct {
-		name             string
-		existingFields   map[string]interface{}
-		updateFields     map[string]interface{}
-		wantFields       map[string]interface{}
+		name           string
+		existingFields map[string]interface{}
+		updateFields   map[string]interface{}
+		wantFields     map[string]interface{}
 	}{
 		{
 			name: "CustomFields 수정: 전체 교체",
@@ -219,14 +219,14 @@ func TestBoardService_UpdateBoard_CustomFields(t *testing.T) {
 					return nil
 				},
 			}
-			
+
 			mockProjectRepo := &MockProjectRepository{}
 			mockFieldOptionRepo := &MockFieldOptionRepository{}
 			mockConverter := &MockFieldOptionConverter{}
 			mockParticipantRepo := &MockParticipantRepository{}
 			logger, _ := zap.NewDevelopment()
 			service := NewBoardService(mockBoardRepo, mockProjectRepo, mockFieldOptionRepo, mockParticipantRepo, &MockAttachmentRepository{}, nil, mockConverter, nil, logger)
-			
+
 			req := &dto.UpdateBoardRequest{
 				CustomFields: &tt.updateFields,
 			}
@@ -239,23 +239,23 @@ func TestBoardService_UpdateBoard_CustomFields(t *testing.T) {
 				t.Errorf("UpdateBoard() unexpected error = %v", err)
 				return
 			}
-			
+
 			// Verify CustomFields were updated in domain model
 			if updatedBoard == nil {
 				t.Fatal("Board was not updated")
 			}
-			
+
 			if updatedBoard.CustomFields == nil {
 				t.Error("Board.CustomFields = nil, want non-nil")
 				return
 			}
-			
+
 			var customFields map[string]interface{}
 			if err := json.Unmarshal(updatedBoard.CustomFields, &customFields); err != nil {
 				t.Errorf("Failed to unmarshal CustomFields: %v", err)
 				return
 			}
-			
+
 			for key, expectedValue := range tt.wantFields {
 				if actualValue, ok := customFields[key]; !ok {
 					t.Errorf("Board.CustomFields[%s] not found", key)
@@ -263,7 +263,7 @@ func TestBoardService_UpdateBoard_CustomFields(t *testing.T) {
 					t.Errorf("Board.CustomFields[%s] = %v, want %v", key, actualValue, expectedValue)
 				}
 			}
-			
+
 			// Verify CustomFields are in response
 			if got.CustomFields == nil {
 				t.Error("Response.CustomFields = nil, want non-nil")
@@ -272,15 +272,14 @@ func TestBoardService_UpdateBoard_CustomFields(t *testing.T) {
 	}
 }
 
-
 func TestUpdateBoard_DateValidation(t *testing.T) {
 	boardID := uuid.New()
 	projectID := uuid.New()
-	
+
 	// Create test dates
 	existingStartDate := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
 	newDueDate := time.Date(2023, 12, 31, 0, 0, 0, 0, time.UTC) // Before existing start date
-	
+
 	mockBoardRepo := &MockBoardRepository{
 		FindByIDFunc: func(ctx context.Context, id uuid.UUID) (*domain.Board, error) {
 			return &domain.Board{
@@ -291,33 +290,33 @@ func TestUpdateBoard_DateValidation(t *testing.T) {
 			}, nil
 		},
 	}
-	
+
 	mockProjectRepo := &MockProjectRepository{}
 	mockFieldOptionRepo := &MockFieldOptionRepository{}
 	mockConverter := &MockFieldOptionConverter{}
-	
+
 	mockParticipantRepo := &MockParticipantRepository{}
-			logger, _ := zap.NewDevelopment()
-			service := NewBoardService(mockBoardRepo, mockProjectRepo, mockFieldOptionRepo, mockParticipantRepo, &MockAttachmentRepository{}, nil, mockConverter, nil, logger)
-	
+	logger, _ := zap.NewDevelopment()
+	service := NewBoardService(mockBoardRepo, mockProjectRepo, mockFieldOptionRepo, mockParticipantRepo, &MockAttachmentRepository{}, nil, mockConverter, nil, logger)
+
 	ctx := context.Background()
-	
+
 	req := &dto.UpdateBoardRequest{
 		DueDate: &newDueDate,
 	}
-	
+
 	// Should return validation error
 	_, err := service.UpdateBoard(ctx, boardID, req)
-	
+
 	if err == nil {
 		t.Fatal("Expected validation error, got nil")
 	}
-	
+
 	appErr, ok := err.(*response.AppError)
 	if !ok {
 		t.Fatalf("Expected AppError, got %T", err)
 	}
-	
+
 	if appErr.Code != response.ErrCodeValidation {
 		t.Errorf("Expected error code %s, got %s", response.ErrCodeValidation, appErr.Code)
 	}
@@ -327,11 +326,11 @@ func TestUpdateBoard_DateValidation(t *testing.T) {
 func TestUpdateBoard_ValidDateUpdate(t *testing.T) {
 	boardID := uuid.New()
 	projectID := uuid.New()
-	
+
 	// Create test dates - valid range
 	existingStartDate := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
 	newDueDate := time.Date(2024, 12, 31, 0, 0, 0, 0, time.UTC)
-	
+
 	mockBoardRepo := &MockBoardRepository{
 		FindByIDFunc: func(ctx context.Context, id uuid.UUID) (*domain.Board, error) {
 			return &domain.Board{
@@ -345,28 +344,28 @@ func TestUpdateBoard_ValidDateUpdate(t *testing.T) {
 			return nil
 		},
 	}
-	
+
 	mockProjectRepo := &MockProjectRepository{}
 	mockFieldOptionRepo := &MockFieldOptionRepository{}
 	mockConverter := &MockFieldOptionConverter{}
-	
+
 	mockParticipantRepo := &MockParticipantRepository{}
-			logger, _ := zap.NewDevelopment()
-			service := NewBoardService(mockBoardRepo, mockProjectRepo, mockFieldOptionRepo, mockParticipantRepo, &MockAttachmentRepository{}, nil, mockConverter, nil, logger)
-	
+	logger, _ := zap.NewDevelopment()
+	service := NewBoardService(mockBoardRepo, mockProjectRepo, mockFieldOptionRepo, mockParticipantRepo, &MockAttachmentRepository{}, nil, mockConverter, nil, logger)
+
 	ctx := context.Background()
-	
+
 	req := &dto.UpdateBoardRequest{
 		DueDate: &newDueDate,
 	}
-	
+
 	// Should succeed
 	result, err := service.UpdateBoard(ctx, boardID, req)
-	
+
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
-	
+
 	if result == nil {
 		t.Fatal("Expected result, got nil")
 	}

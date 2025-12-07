@@ -151,7 +151,7 @@ func TestIntegrationGetBoardsByProjectWithParticipants(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.NotNil(t, resp["data"], "Response should have data field")
-	
+
 	data := resp["data"].([]interface{})
 	assert.Len(t, data, 2, "Should return 2 boards")
 
@@ -386,7 +386,7 @@ func TestIntegrationPartialSuccessDuplicateParticipants(t *testing.T) {
 
 	// Verify results
 	require.Len(t, resp.Results, 2)
-	
+
 	// Find the results for each user
 	var existingResult, newResult *dto.ParticipantResult
 	for i := range resp.Results {
@@ -403,7 +403,7 @@ func TestIntegrationPartialSuccessDuplicateParticipants(t *testing.T) {
 
 	assert.False(t, existingResult.Success, "Existing participant should fail")
 	assert.NotEmpty(t, existingResult.Error, "Should have error message for duplicate")
-	
+
 	assert.True(t, newResult.Success, "New participant should succeed")
 	assert.Empty(t, newResult.Error, "Should not have error for successful addition")
 }

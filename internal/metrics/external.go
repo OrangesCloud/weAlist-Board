@@ -63,11 +63,11 @@ func getErrorType(statusCode int, err error) string {
 	case statusCode >= 500 && statusCode < 600:
 		return "server_error"
 	}
-	
+
 	// If no status code error, check network/connection errors
 	if err != nil {
 		errMsg := err.Error()
-		
+
 		// Network/connection errors
 		if contains(errMsg, "connection refused") {
 			return "connection_refused"
@@ -84,10 +84,10 @@ func getErrorType(statusCode int, err error) string {
 		if contains(errMsg, "TLS") || contains(errMsg, "certificate") {
 			return "tls_error"
 		}
-		
+
 		return "network_error"
 	}
-	
+
 	return "unknown"
 }
 

@@ -107,13 +107,13 @@ func TestCleanupJob_Run_ExpiredFilesDeleted(t *testing.T) {
 	mockRepo := new(MockAttachmentRepository)
 	mockS3 := new(MockS3Client)
 	logger := zap.NewNop()
-	
+
 	job := NewCleanupJob(mockRepo, mockS3, logger)
-	
+
 	// Create expired attachments
 	now := time.Now()
 	expiredTime := now.Add(-2 * time.Hour)
-	
+
 	attachment1 := &domain.Attachment{
 		BaseModel: domain.BaseModel{
 			ID: uuid.New(),
@@ -127,7 +127,7 @@ func TestCleanupJob_Run_ExpiredFilesDeleted(t *testing.T) {
 		UploadedBy:  uuid.New(),
 		ExpiresAt:   &expiredTime,
 	}
-	
+
 	attachment2 := &domain.Attachment{
 		BaseModel: domain.BaseModel{
 			ID: uuid.New(),
@@ -141,18 +141,18 @@ func TestCleanupJob_Run_ExpiredFilesDeleted(t *testing.T) {
 		UploadedBy:  uuid.New(),
 		ExpiresAt:   &expiredTime,
 	}
-	
+
 	expiredAttachments := []*domain.Attachment{attachment1, attachment2}
-	
+
 	// Mock expectations
 	mockRepo.On("FindExpiredTempAttachments", mock.Anything).Return(expiredAttachments, nil)
 	mockS3.On("DeleteFile", mock.Anything, "board/boards/workspace1/2024/01/file1.jpg").Return(nil)
 	mockS3.On("DeleteFile", mock.Anything, "board/comments/workspace1/2024/01/file2.pdf").Return(nil)
 	mockRepo.On("DeleteBatch", mock.Anything, []uuid.UUID{attachment1.ID, attachment2.ID}).Return(nil)
-	
+
 	// Execute
 	job.Run()
-	
+
 	// Assert
 	mockRepo.AssertExpectations(t)
 	mockS3.AssertExpectations(t)
@@ -163,15 +163,15 @@ func TestCleanupJob_Run_NoExpiredFiles(t *testing.T) {
 	mockRepo := new(MockAttachmentRepository)
 	mockS3 := new(MockS3Client)
 	logger := zap.NewNop()
-	
+
 	job := NewCleanupJob(mockRepo, mockS3, logger)
-	
+
 	// Mock expectations - no expired attachments
 	mockRepo.On("FindExpiredTempAttachments", mock.Anything).Return([]*domain.Attachment{}, nil)
-	
+
 	// Execute
 	job.Run()
-	
+
 	// Assert
 	mockRepo.AssertExpectations(t)
 	mockS3.AssertNotCalled(t, "DeleteFile")
@@ -183,16 +183,16 @@ func TestCleanupJob_Run_NonExpiredFilesNotDeleted(t *testing.T) {
 	mockRepo := new(MockAttachmentRepository)
 	mockS3 := new(MockS3Client)
 	logger := zap.NewNop()
-	
+
 	job := NewCleanupJob(mockRepo, mockS3, logger)
-	
+
 	// Mock expectations - repository should not return non-expired attachments
 	// This simulates the repository correctly filtering by expiration
 	mockRepo.On("FindExpiredTempAttachments", mock.Anything).Return([]*domain.Attachment{}, nil)
-	
+
 	// Execute
 	job.Run()
-	
+
 	// Assert - S3 delete and batch delete should not be called
 	mockRepo.AssertExpectations(t)
 	mockS3.AssertNotCalled(t, "DeleteFile")
@@ -204,13 +204,13 @@ func TestCleanupJob_Run_S3DeleteFailure(t *testing.T) {
 	mockRepo := new(MockAttachmentRepository)
 	mockS3 := new(MockS3Client)
 	logger := zap.NewNop()
-	
+
 	job := NewCleanupJob(mockRepo, mockS3, logger)
-	
+
 	// Create expired attachments
 	now := time.Now()
 	expiredTime := now.Add(-2 * time.Hour)
-	
+
 	attachment1 := &domain.Attachment{
 		BaseModel: domain.BaseModel{
 			ID: uuid.New(),
@@ -224,7 +224,7 @@ func TestCleanupJob_Run_S3DeleteFailure(t *testing.T) {
 		UploadedBy:  uuid.New(),
 		ExpiresAt:   &expiredTime,
 	}
-	
+
 	attachment2 := &domain.Attachment{
 		BaseModel: domain.BaseModel{
 			ID: uuid.New(),
@@ -238,20 +238,20 @@ func TestCleanupJob_Run_S3DeleteFailure(t *testing.T) {
 		UploadedBy:  uuid.New(),
 		ExpiresAt:   &expiredTime,
 	}
-	
+
 	expiredAttachments := []*domain.Attachment{attachment1, attachment2}
-	
+
 	// Mock expectations - first S3 delete fails, second succeeds
 	mockRepo.On("FindExpiredTempAttachments", mock.Anything).Return(expiredAttachments, nil)
 	mockS3.On("DeleteFile", mock.Anything, "board/boards/workspace1/2024/01/file1.jpg").Return(errors.New("S3 error"))
 	mockS3.On("DeleteFile", mock.Anything, "board/comments/workspace1/2024/01/file2.pdf").Return(nil)
-	
+
 	// Only the second attachment should be deleted from DB
 	mockRepo.On("DeleteBatch", mock.Anything, []uuid.UUID{attachment2.ID}).Return(nil)
-	
+
 	// Execute
 	job.Run()
-	
+
 	// Assert
 	mockRepo.AssertExpectations(t)
 	mockS3.AssertExpectations(t)
@@ -262,15 +262,15 @@ func TestCleanupJob_Run_RepositoryFindError(t *testing.T) {
 	mockRepo := new(MockAttachmentRepository)
 	mockS3 := new(MockS3Client)
 	logger := zap.NewNop()
-	
+
 	job := NewCleanupJob(mockRepo, mockS3, logger)
-	
+
 	// Mock expectations - repository returns error
 	mockRepo.On("FindExpiredTempAttachments", mock.Anything).Return(nil, errors.New("database error"))
-	
+
 	// Execute
 	job.Run()
-	
+
 	// Assert - should handle error gracefully
 	mockRepo.AssertExpectations(t)
 	mockS3.AssertNotCalled(t, "DeleteFile")
@@ -282,13 +282,13 @@ func TestCleanupJob_Run_DatabaseDeleteError(t *testing.T) {
 	mockRepo := new(MockAttachmentRepository)
 	mockS3 := new(MockS3Client)
 	logger := zap.NewNop()
-	
+
 	job := NewCleanupJob(mockRepo, mockS3, logger)
-	
+
 	// Create expired attachment
 	now := time.Now()
 	expiredTime := now.Add(-2 * time.Hour)
-	
+
 	attachment := &domain.Attachment{
 		BaseModel: domain.BaseModel{
 			ID: uuid.New(),
@@ -302,17 +302,17 @@ func TestCleanupJob_Run_DatabaseDeleteError(t *testing.T) {
 		UploadedBy:  uuid.New(),
 		ExpiresAt:   &expiredTime,
 	}
-	
+
 	expiredAttachments := []*domain.Attachment{attachment}
-	
+
 	// Mock expectations - S3 delete succeeds but DB delete fails
 	mockRepo.On("FindExpiredTempAttachments", mock.Anything).Return(expiredAttachments, nil)
 	mockS3.On("DeleteFile", mock.Anything, "board/boards/workspace1/2024/01/file.jpg").Return(nil)
 	mockRepo.On("DeleteBatch", mock.Anything, []uuid.UUID{attachment.ID}).Return(errors.New("database error"))
-	
+
 	// Execute
 	job.Run()
-	
+
 	// Assert - should handle error gracefully
 	mockRepo.AssertExpectations(t)
 	mockS3.AssertExpectations(t)
@@ -323,9 +323,9 @@ func TestCleanupJob_ExtractFileKeyFromURL(t *testing.T) {
 	mockRepo := new(MockAttachmentRepository)
 	mockS3 := new(MockS3Client)
 	logger := zap.NewNop()
-	
+
 	job := NewCleanupJob(mockRepo, mockS3, logger)
-	
+
 	tests := []struct {
 		name     string
 		fileURL  string
@@ -352,7 +352,7 @@ func TestCleanupJob_ExtractFileKeyFromURL(t *testing.T) {
 			expected: "",
 		},
 	}
-	
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := job.extractFileKeyFromURL(tt.fileURL)

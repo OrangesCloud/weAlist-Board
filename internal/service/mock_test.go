@@ -104,8 +104,8 @@ func (m *MockFieldOptionRepository) FindByIDs(ctx context.Context, ids []uuid.UU
 
 // MockFieldOptionConverter is a mock implementation of FieldOptionConverter
 type MockFieldOptionConverter struct {
-	ConvertValuesToIDsFunc     func(ctx context.Context, projectID uuid.UUID, customFields map[string]interface{}) (map[string]interface{}, error)
-	ConvertIDsToValuesFunc     func(ctx context.Context, customFields map[string]interface{}) (map[string]interface{}, error)
+	ConvertValuesToIDsFunc      func(ctx context.Context, projectID uuid.UUID, customFields map[string]interface{}) (map[string]interface{}, error)
+	ConvertIDsToValuesFunc      func(ctx context.Context, customFields map[string]interface{}) (map[string]interface{}, error)
 	ConvertIDsToValuesBatchFunc func(ctx context.Context, boards []*domain.Board) error
 }
 

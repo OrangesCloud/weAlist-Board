@@ -21,23 +21,23 @@ import (
 func TestBoardService_CreateBoard(t *testing.T) {
 	projectID := uuid.New()
 	validUserID := uuid.New()
-	
+
 	tests := []struct {
-		name          string
-		req           *dto.CreateBoardRequest
-		ctx           context.Context
-		mockProject   func(*MockProjectRepository)
-		mockBoard     func(*MockBoardRepository)
-		wantErr       bool
-		wantErrCode   string
+		name        string
+		req         *dto.CreateBoardRequest
+		ctx         context.Context
+		mockProject func(*MockProjectRepository)
+		mockBoard   func(*MockBoardRepository)
+		wantErr     bool
+		wantErrCode string
 	}{
 		{
 			name: "성공: 정상적인 Board 생성",
 			ctx:  context.WithValue(context.Background(), "user_id", validUserID),
 			req: &dto.CreateBoardRequest{
-				ProjectID:  projectID,
-				Title:      "Test Board",
-				Content:    "Test Content",
+				ProjectID: projectID,
+				Title:     "Test Board",
+				Content:   "Test Content",
 				CustomFields: map[string]interface{}{
 					"stage":      "in_progress",
 					"importance": "urgent",
@@ -99,9 +99,9 @@ func TestBoardService_CreateBoard(t *testing.T) {
 			name: "실패: Project가 존재하지 않음",
 			ctx:  context.WithValue(context.Background(), "user_id", validUserID),
 			req: &dto.CreateBoardRequest{
-				ProjectID:  projectID,
-				Title:      "Test Board",
-				Content:    "Test Content",
+				ProjectID: projectID,
+				Title:     "Test Board",
+				Content:   "Test Content",
 				CustomFields: map[string]interface{}{
 					"stage": "in_progress",
 				},
@@ -111,7 +111,7 @@ func TestBoardService_CreateBoard(t *testing.T) {
 					return nil, gorm.ErrRecordNotFound
 				}
 			},
-			mockBoard: func(m *MockBoardRepository) {},
+			mockBoard:   func(m *MockBoardRepository) {},
 			wantErr:     true,
 			wantErrCode: response.ErrCodeNotFound,
 		},
@@ -119,9 +119,9 @@ func TestBoardService_CreateBoard(t *testing.T) {
 			name: "실패: Board 생성 중 DB 에러",
 			ctx:  context.WithValue(context.Background(), "user_id", validUserID),
 			req: &dto.CreateBoardRequest{
-				ProjectID:  projectID,
-				Title:      "Test Board",
-				Content:    "Test Content",
+				ProjectID: projectID,
+				Title:     "Test Board",
+				Content:   "Test Content",
 				CustomFields: map[string]interface{}{
 					"stage": "in_progress",
 				},
@@ -150,7 +150,7 @@ func TestBoardService_CreateBoard(t *testing.T) {
 			mockConverter := &MockFieldOptionConverter{}
 			tt.mockProject(mockProjectRepo)
 			tt.mockBoard(mockBoardRepo)
-			
+
 			mockParticipantRepo := &MockParticipantRepository{}
 			logger, _ := zap.NewDevelopment()
 			service := NewBoardService(mockBoardRepo, mockProjectRepo, mockFieldOptionRepo, mockParticipantRepo, &MockAttachmentRepository{}, nil, mockConverter, nil, logger)
@@ -194,7 +194,7 @@ func TestBoardService_CreateBoard(t *testing.T) {
 
 func TestBoardService_CreateBoard_CustomFields(t *testing.T) {
 	projectID := uuid.New()
-	
+
 	tests := []struct {
 		name         string
 		customFields map[string]interface{}
@@ -237,7 +237,7 @@ func TestBoardService_CreateBoard_CustomFields(t *testing.T) {
 					return &domain.Project{}, nil
 				},
 			}
-			
+
 			var savedBoard *domain.Board
 			mockBoardRepo := &MockBoardRepository{
 				CreateFunc: func(ctx context.Context, board *domain.Board) error {
@@ -248,13 +248,13 @@ func TestBoardService_CreateBoard_CustomFields(t *testing.T) {
 					return nil
 				},
 			}
-			
+
 			mockFieldOptionRepo := &MockFieldOptionRepository{}
 			mockConverter := &MockFieldOptionConverter{}
 			mockParticipantRepo := &MockParticipantRepository{}
 			logger, _ := zap.NewDevelopment()
 			service := NewBoardService(mockBoardRepo, mockProjectRepo, mockFieldOptionRepo, mockParticipantRepo, &MockAttachmentRepository{}, nil, mockConverter, nil, logger)
-			
+
 			req := &dto.CreateBoardRequest{
 				ProjectID:    projectID,
 				Title:        "Test Board",
@@ -273,24 +273,24 @@ func TestBoardService_CreateBoard_CustomFields(t *testing.T) {
 				t.Errorf("CreateBoard() unexpected error = %v", err)
 				return
 			}
-			
+
 			// Verify CustomFields were saved to domain model
 			if savedBoard == nil {
 				t.Fatal("Board was not saved")
 			}
-			
+
 			if len(tt.wantFields) > 0 {
 				if savedBoard.CustomFields == nil {
 					t.Error("Board.CustomFields = nil, want non-nil")
 					return
 				}
-				
+
 				var customFields map[string]interface{}
 				if err := json.Unmarshal(savedBoard.CustomFields, &customFields); err != nil {
 					t.Errorf("Failed to unmarshal CustomFields: %v", err)
 					return
 				}
-				
+
 				for key, expectedValue := range tt.wantFields {
 					if actualValue, ok := customFields[key]; !ok {
 						t.Errorf("Board.CustomFields[%s] not found", key)
@@ -299,7 +299,7 @@ func TestBoardService_CreateBoard_CustomFields(t *testing.T) {
 					}
 				}
 			}
-			
+
 			// Verify CustomFields are in response
 			if got.CustomFields == nil && len(tt.wantFields) > 0 {
 				t.Error("Response.CustomFields = nil, want non-nil")
@@ -307,4 +307,3 @@ func TestBoardService_CreateBoard_CustomFields(t *testing.T) {
 		})
 	}
 }
-

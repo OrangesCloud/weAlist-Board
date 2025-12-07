@@ -10,7 +10,7 @@ import (
 func TestProperty18_MetricHelpDescription(t *testing.T) {
 	// Create a new registry to collect all metrics
 	registry := prometheus.NewRegistry()
-	
+
 	// Register all metrics with the test registry
 	m := &Metrics{
 		HTTPRequestsTotal: prometheus.NewCounterVec(
@@ -176,11 +176,11 @@ func TestProperty18_MetricHelpDescription(t *testing.T) {
 	for _, mf := range metricFamilies {
 		name := mf.GetName()
 		help := mf.GetHelp()
-		
+
 		if help == "" {
 			t.Errorf("Metric '%s' has an empty help description", name)
 		}
-		
+
 		if len(strings.TrimSpace(help)) == 0 {
 			t.Errorf("Metric '%s' has a help description with only whitespace", name)
 		}

@@ -69,7 +69,7 @@ import (
 // @Success 200 {object} dto.UpdateBoardFieldRequest
 
 func main() {
-	
+
 	// Load configuration
 	cfg, err := config.Load("configs/config.yaml")
 	if err != nil {
@@ -119,15 +119,15 @@ func main() {
 	// Initialize metrics with logger
 	log.Info("Initializing Prometheus metrics")
 	m := metrics.NewWithLogger(log.Logger)
-	
+
 	// Register GORM callbacks for database metrics
 	database.RegisterMetricsCallbacks(db, m)
 	log.Info("GORM metrics callbacks registered")
-	
+
 	// Start database stats collector
 	database.StartDBStatsCollector(db, m)
 	log.Info("Database stats collector started")
-	
+
 	// Initialize and start business metrics collector
 	businessCollector := metrics.NewBusinessMetricsCollector(db, m, log.Logger)
 	businessCollector.Start()
@@ -189,7 +189,7 @@ func main() {
 
 	// Setup cron scheduler
 	c := cron.New()
-	
+
 	// Schedule cleanup job to run every hour
 	_, err = c.AddFunc("@hourly", func() {
 		log.Info("Running scheduled cleanup job")
@@ -198,7 +198,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to schedule cleanup job", zap.Error(err))
 	}
-	
+
 	// Start cron scheduler
 	c.Start()
 	log.Info("Cleanup job scheduled successfully (runs every hour)")

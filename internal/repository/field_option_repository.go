@@ -139,7 +139,7 @@ func (r *fieldOptionRepositoryImpl) FindByIDs(ctx context.Context, ids []uuid.UU
 	if len(ids) == 0 {
 		return []*domain.FieldOption{}, nil
 	}
-	
+
 	var fieldOptions []*domain.FieldOption
 	if err := r.db.WithContext(ctx).
 		Where("id IN ?", ids).

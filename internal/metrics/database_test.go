@@ -63,45 +63,45 @@ func TestUpdateDBStats(t *testing.T) {
 		{
 			name: "normal stats",
 			stats: sql.DBStats{
-				OpenConnections: 10,
-				InUse:           5,
-				Idle:            5,
+				OpenConnections:    10,
+				InUse:              5,
+				Idle:               5,
 				MaxOpenConnections: 20,
-				WaitCount:       100,
-				WaitDuration:    500 * time.Millisecond,
+				WaitCount:          100,
+				WaitDuration:       500 * time.Millisecond,
 			},
 		},
 		{
 			name: "zero connections",
 			stats: sql.DBStats{
-				OpenConnections: 0,
-				InUse:           0,
-				Idle:            0,
+				OpenConnections:    0,
+				InUse:              0,
+				Idle:               0,
 				MaxOpenConnections: 10,
-				WaitCount:       0,
-				WaitDuration:    0,
+				WaitCount:          0,
+				WaitDuration:       0,
 			},
 		},
 		{
 			name: "max connections",
 			stats: sql.DBStats{
-				OpenConnections: 50,
-				InUse:           50,
-				Idle:            0,
+				OpenConnections:    50,
+				InUse:              50,
+				Idle:               0,
 				MaxOpenConnections: 50,
-				WaitCount:       1000,
-				WaitDuration:    5 * time.Second,
+				WaitCount:          1000,
+				WaitDuration:       5 * time.Second,
 			},
 		},
 		{
 			name: "all idle",
 			stats: sql.DBStats{
-				OpenConnections: 20,
-				InUse:           0,
-				Idle:            20,
+				OpenConnections:    20,
+				InUse:              0,
+				Idle:               20,
 				MaxOpenConnections: 30,
-				WaitCount:       0,
-				WaitDuration:    0,
+				WaitCount:          0,
+				WaitDuration:       0,
 			},
 		},
 	}
@@ -223,7 +223,7 @@ func TestProperty_OperationTypeNormalization(t *testing.T) {
 						break
 					}
 				}
-				
+
 				// If input wasn't all lowercase, result should be different
 				if !allLower && result == operation {
 					t.Logf("Expected transformation for %q, but got same value", operation)

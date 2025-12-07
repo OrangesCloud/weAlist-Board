@@ -61,12 +61,12 @@ func NewWithLogger(logger *zap.Logger) *Metrics {
 // NewWithRegistry creates and registers all metrics with a custom registry
 func NewWithRegistry(registerer prometheus.Registerer, logger *zap.Logger) *Metrics {
 	factory := promauto.With(registerer)
-	
+
 	// Use a no-op logger if none provided
 	if logger == nil {
 		logger, _ = zap.NewProduction()
 	}
-	
+
 	return &Metrics{
 		// HTTP metrics
 		HTTPRequestsTotal: factory.NewCounterVec(
@@ -206,7 +206,7 @@ func NewWithRegistry(registerer prometheus.Registerer, logger *zap.Logger) *Metr
 				Help:      "Total number of board creation events",
 			},
 		),
-		
+
 		logger: logger,
 	}
 }

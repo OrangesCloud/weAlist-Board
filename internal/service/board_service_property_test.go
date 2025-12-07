@@ -93,7 +93,7 @@ func TestProperty_ParticipantArrayAcceptance(t *testing.T) {
 				mockProjectRepo,
 				mockFieldOptionRepo,
 				mockParticipantRepo,
-			&MockAttachmentRepository{},
+				&MockAttachmentRepository{},
 				nil, // s3Client
 				mockConverter,
 				nil,
@@ -224,7 +224,7 @@ func TestProperty_RoundTripParticipantConsistency(t *testing.T) {
 				mockProjectRepo,
 				mockFieldOptionRepo,
 				mockParticipantRepo,
-			&MockAttachmentRepository{},
+				&MockAttachmentRepository{},
 				nil, // s3Client
 				mockConverter,
 				nil,
@@ -275,8 +275,8 @@ func TestProperty_RoundTripParticipantConsistency(t *testing.T) {
 
 			return true
 		},
-		gen.IntRange(1, 20),  // Generate 1-20 participants
-		gen.Bool(),           // Whether to add duplicates
+		gen.IntRange(1, 20), // Generate 1-20 participants
+		gen.Bool(),          // Whether to add duplicates
 	))
 
 	properties.TestingRun(t)
@@ -372,8 +372,8 @@ func TestProperty_DuplicateRemoval(t *testing.T) {
 
 			return true
 		},
-		gen.IntRange(1, 20),  // Generate 1-20 unique participants
-		gen.IntRange(1, 5),   // Each participant appears 1-5 times (duplicate factor)
+		gen.IntRange(1, 20), // Generate 1-20 unique participants
+		gen.IntRange(1, 5),  // Each participant appears 1-5 times (duplicate factor)
 	))
 
 	properties.TestingRun(t)
@@ -430,7 +430,7 @@ func TestProperty_BackwardCompatibility(t *testing.T) {
 				mockProjectRepo,
 				mockFieldOptionRepo,
 				mockParticipantRepo,
-			&MockAttachmentRepository{},
+				&MockAttachmentRepository{},
 				nil, // s3Client
 				mockConverter,
 				nil,
@@ -581,7 +581,7 @@ func TestProperty_AssigneeAsParticipant(t *testing.T) {
 				mockProjectRepo,
 				mockFieldOptionRepo,
 				mockParticipantRepo,
-			&MockAttachmentRepository{},
+				&MockAttachmentRepository{},
 				nil, // s3Client
 				mockConverter,
 				nil,
@@ -642,8 +642,8 @@ func TestProperty_AssigneeAsParticipant(t *testing.T) {
 
 			return true
 		},
-		gen.IntRange(0, 10),  // Generate 0-10 additional participants
-		gen.Bool(),           // Whether to include assignee in participants
+		gen.IntRange(0, 10), // Generate 0-10 additional participants
+		gen.Bool(),          // Whether to include assignee in participants
 	))
 
 	properties.TestingRun(t)

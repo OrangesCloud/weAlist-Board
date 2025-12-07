@@ -173,7 +173,7 @@ func setupIntegrationRouter(db *gorm.DB) *gin.Engine {
 	// Create a no-op logger for tests
 	logger, _ := zap.NewDevelopment()
 	attachmentRepo := repository.NewAttachmentRepository(db)
-	
+
 	// Create S3 client for tests
 	cfg := &config.S3Config{
 		Bucket:    "test-bucket",
@@ -183,7 +183,7 @@ func setupIntegrationRouter(db *gorm.DB) *gin.Engine {
 	}
 	s3Client, _ := client.NewS3Client(cfg)
 	m := metrics.NewTestMetrics()
-	
+
 	boardService := service.NewBoardService(boardRepo, projectRepo, fieldOptionRepo, participantRepo, attachmentRepo, s3Client, fieldOptionConverter, m, logger)
 
 	commentService := service.NewCommentService(commentRepo, boardRepo, attachmentRepo, s3Client, logger)

@@ -86,10 +86,10 @@ func TestFieldOptionService_GetFieldOptions(t *testing.T) {
 			wantCount: 0,
 		},
 		{
-			name:      "실패: 잘못된 필드 타입",
-			fieldType: domain.FieldType("invalid"),
-			mockRepo:  func(m *MockFieldOptionRepository) {},
-			wantErr:   true,
+			name:        "실패: 잘못된 필드 타입",
+			fieldType:   domain.FieldType("invalid"),
+			mockRepo:    func(m *MockFieldOptionRepository) {},
+			wantErr:     true,
 			wantErrCode: response.ErrCodeValidation,
 		},
 		{

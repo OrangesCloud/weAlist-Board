@@ -16,11 +16,11 @@ import (
 
 // MockBoardService is a mock implementation of BoardService
 type MockBoardService struct {
-	CreateBoardFunc       func(ctx context.Context, req *dto.CreateBoardRequest) (*dto.BoardResponse, error)
-	GetBoardFunc          func(ctx context.Context, boardID uuid.UUID) (*dto.BoardDetailResponse, error)
+	CreateBoardFunc        func(ctx context.Context, req *dto.CreateBoardRequest) (*dto.BoardResponse, error)
+	GetBoardFunc           func(ctx context.Context, boardID uuid.UUID) (*dto.BoardDetailResponse, error)
 	GetBoardsByProjectFunc func(ctx context.Context, projectID uuid.UUID, filters *dto.BoardFilters) ([]*dto.BoardResponse, error)
-	UpdateBoardFunc       func(ctx context.Context, boardID uuid.UUID, req *dto.UpdateBoardRequest) (*dto.BoardResponse, error)
-	DeleteBoardFunc       func(ctx context.Context, boardID uuid.UUID) error
+	UpdateBoardFunc        func(ctx context.Context, boardID uuid.UUID, req *dto.UpdateBoardRequest) (*dto.BoardResponse, error)
+	DeleteBoardFunc        func(ctx context.Context, boardID uuid.UUID) error
 }
 
 func (m *MockBoardService) CreateBoard(ctx context.Context, req *dto.CreateBoardRequest) (*dto.BoardResponse, error) {
@@ -144,7 +144,7 @@ func TestBoardHandler_CreateBoard(t *testing.T) {
 			mockService := &MockBoardService{}
 			tt.mockService(mockService)
 			handler := NewBoardHandler(mockService)
-			
+
 			router := setupTestRouter()
 			router.POST("/api/boards", handler.CreateBoard)
 
@@ -218,7 +218,7 @@ func TestBoardHandler_GetBoard(t *testing.T) {
 			mockService := &MockBoardService{}
 			tt.mockService(mockService)
 			handler := NewBoardHandler(mockService)
-			
+
 			router := setupTestRouter()
 			router.GET("/api/boards/:boardId", handler.GetBoard)
 
@@ -353,10 +353,10 @@ func TestBoardHandler_GetBoardsByProject(t *testing.T) {
 			expectedStatus: http.StatusNotFound,
 		},
 		{
-			name:        "실패: 잘못된 CustomFields JSON 형식",
-			projectID:   projectID.String(),
-			queryParams: `?customFields=invalid-json`,
-			mockService: func(m *MockBoardService) {},
+			name:           "실패: 잘못된 CustomFields JSON 형식",
+			projectID:      projectID.String(),
+			queryParams:    `?customFields=invalid-json`,
+			mockService:    func(m *MockBoardService) {},
 			expectedStatus: http.StatusBadRequest,
 			checkResponse: func(t *testing.T, w *httptest.ResponseRecorder) {
 				var resp response.ErrorResponse
@@ -382,7 +382,7 @@ func TestBoardHandler_GetBoardsByProject(t *testing.T) {
 			mockService := &MockBoardService{}
 			tt.mockService(mockService)
 			handler := NewBoardHandler(mockService)
-			
+
 			router := setupTestRouter()
 			router.GET("/api/boards/project/:projectId", handler.GetBoardsByProject)
 
@@ -504,7 +504,7 @@ func TestBoardHandler_UpdateBoard(t *testing.T) {
 			mockService := &MockBoardService{}
 			tt.mockService(mockService)
 			handler := NewBoardHandler(mockService)
-			
+
 			router := setupTestRouter()
 			router.PUT("/api/boards/:boardId", handler.UpdateBoard)
 
@@ -580,7 +580,7 @@ func TestBoardHandler_DeleteBoard(t *testing.T) {
 			mockService := &MockBoardService{}
 			tt.mockService(mockService)
 			handler := NewBoardHandler(mockService)
-			
+
 			router := setupTestRouter()
 			router.DELETE("/api/boards/:boardId", handler.DeleteBoard)
 

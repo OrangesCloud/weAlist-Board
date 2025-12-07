@@ -52,11 +52,11 @@ func (r *projectJoinRequestRepositoryImpl) FindByID(ctx context.Context, id uuid
 func (r *projectJoinRequestRepositoryImpl) FindByProjectID(ctx context.Context, projectID uuid.UUID, status *domain.ProjectJoinRequestStatus) ([]*domain.ProjectJoinRequest, error) {
 	var requests []*domain.ProjectJoinRequest
 	query := r.db.WithContext(ctx).Where("project_id = ?", projectID)
-	
+
 	if status != nil {
 		query = query.Where("status = ?", *status)
 	}
-	
+
 	if err := query.Order("requested_at DESC").Find(&requests).Error; err != nil {
 		return nil, err
 	}

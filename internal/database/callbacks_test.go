@@ -95,7 +95,7 @@ func TestRegisterMetricsCallbacks_Query(t *testing.T) {
 
 	// Verify metrics were recorded
 	require.Len(t, recorder.queries, 1, "Expected one query to be recorded")
-	
+
 	query := recorder.queries[0]
 	assert.Equal(t, "select", query.operation, "Operation should be 'select'")
 	assert.Equal(t, "test_models", query.table, "Table should be 'test_models'")
@@ -123,7 +123,7 @@ func TestRegisterMetricsCallbacks_Create(t *testing.T) {
 
 	// Verify metrics were recorded
 	require.Len(t, recorder.queries, 1, "Expected one query to be recorded")
-	
+
 	query := recorder.queries[0]
 	assert.Equal(t, "insert", query.operation, "Operation should be 'insert'")
 	assert.Equal(t, "test_models", query.table, "Table should be 'test_models'")
@@ -158,7 +158,7 @@ func TestRegisterMetricsCallbacks_Update(t *testing.T) {
 
 	// Verify metrics were recorded
 	require.Len(t, recorder.queries, 1, "Expected one query to be recorded")
-	
+
 	query := recorder.queries[0]
 	assert.Equal(t, "update", query.operation, "Operation should be 'update'")
 	assert.Equal(t, "test_models", query.table, "Table should be 'test_models'")
@@ -193,7 +193,7 @@ func TestRegisterMetricsCallbacks_Delete(t *testing.T) {
 
 	// Verify metrics were recorded
 	require.Len(t, recorder.queries, 1, "Expected one query to be recorded")
-	
+
 	query := recorder.queries[0]
 	assert.Equal(t, "delete", query.operation, "Operation should be 'delete'")
 	assert.Equal(t, "test_models", query.table, "Table should be 'test_models'")
@@ -218,7 +218,7 @@ func TestRegisterMetricsCallbacks_QueryError(t *testing.T) {
 
 	// Verify metrics were recorded with error
 	require.Len(t, recorder.queries, 1, "Expected one query to be recorded")
-	
+
 	query := recorder.queries[0]
 	assert.Equal(t, "select", query.operation, "Operation should be 'select'")
 	assert.Equal(t, "test_models", query.table, "Table should be 'test_models'")
@@ -242,7 +242,7 @@ func TestRegisterMetricsCallbacks_MultipleOperations(t *testing.T) {
 		ID:   testID,
 		Name: "test",
 	}
-	
+
 	// Create
 	err := db.Create(&testData).Error
 	require.NoError(t, err)
@@ -262,14 +262,14 @@ func TestRegisterMetricsCallbacks_MultipleOperations(t *testing.T) {
 
 	// Verify all operations were recorded
 	require.Len(t, recorder.queries, 4, "Expected four queries to be recorded")
-	
+
 	operations := []string{"insert", "select", "update", "delete"}
 	for i, expectedOp := range operations {
-		assert.Equal(t, expectedOp, recorder.queries[i].operation, 
+		assert.Equal(t, expectedOp, recorder.queries[i].operation,
 			"Operation %d should be '%s'", i, expectedOp)
-		assert.Equal(t, "test_models", recorder.queries[i].table, 
+		assert.Equal(t, "test_models", recorder.queries[i].table,
 			"Table for operation %d should be 'test_models'", i)
-		assert.Greater(t, recorder.queries[i].duration, time.Duration(0), 
+		assert.Greater(t, recorder.queries[i].duration, time.Duration(0),
 			"Duration for operation %d should be greater than 0", i)
 	}
 }
@@ -296,7 +296,7 @@ func TestStartDBStatsCollector(t *testing.T) {
 
 	// Verify stats were collected
 	assert.Greater(t, recorder.statsCall, 0, "Stats should have been collected at least once")
-	
+
 	if len(recorder.dbStats) > 0 {
 		lastStats := recorder.dbStats[len(recorder.dbStats)-1]
 		// Verify stats structure (values may vary)
@@ -360,7 +360,7 @@ func TestRegisterMetricsCallbacks_CreateError(t *testing.T) {
 
 	// Verify error was recorded
 	require.Len(t, recorder.queries, 1, "Expected one query to be recorded")
-	
+
 	query := recorder.queries[0]
 	assert.Equal(t, "insert", query.operation, "Operation should be 'insert'")
 	assert.Error(t, query.err, "Query should have error")
@@ -400,7 +400,7 @@ func TestRegisterMetricsCallbacks_Transaction(t *testing.T) {
 
 	// Verify both creates were recorded
 	assert.GreaterOrEqual(t, len(recorder.queries), 2, "Expected at least two queries to be recorded")
-	
+
 	// Count insert operations
 	insertCount := 0
 	for _, query := range recorder.queries {

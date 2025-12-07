@@ -343,7 +343,7 @@ func (c *userClient) doRequest(ctx context.Context, method, url, token string, r
 	// Execute request
 	resp, err := c.httpClient.Do(req)
 	duration := time.Since(startTime)
-	
+
 	// Record metrics
 	statusCode := 0
 	if resp != nil {
@@ -352,7 +352,7 @@ func (c *userClient) doRequest(ctx context.Context, method, url, token string, r
 	if c.metrics != nil {
 		c.metrics.RecordExternalAPICall(url, method, statusCode, duration, err)
 	}
-	
+
 	if err != nil {
 		c.logger.Error("Failed to execute HTTP request",
 			zap.Error(err),

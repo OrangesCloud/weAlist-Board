@@ -20,7 +20,7 @@ type Config struct {
 	UserAPI  UserAPIConfig  `yaml:"user_api"`
 	CORS     CORSConfig     `yaml:"cors"`
 	Redis    RedisConfig    `mapstructure:"redis" yaml:"redis"` // ← Redis 추가
-	S3       S3Config       `yaml:"s3"`                          // ← S3 추가
+	S3       S3Config       `yaml:"s3"`                         // ← S3 추가
 }
 
 // ServerConfig holds server configuration

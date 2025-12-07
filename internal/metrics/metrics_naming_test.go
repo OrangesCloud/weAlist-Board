@@ -12,7 +12,7 @@ import (
 func TestProperty14_MetricNamingSnakeCase(t *testing.T) {
 	// Create a new registry to collect all metrics
 	registry := prometheus.NewRegistry()
-	
+
 	// Register all metrics with the test registry
 	m := &Metrics{
 		HTTPRequestsTotal: prometheus.NewCounterVec(
@@ -180,10 +180,10 @@ func TestProperty14_MetricNamingSnakeCase(t *testing.T) {
 	// Check each metric name
 	for _, mf := range metricFamilies {
 		name := mf.GetName()
-		
+
 		// Remove namespace prefix for checking the base name
 		baseName := strings.TrimPrefix(name, namespace+"_")
-		
+
 		if !snakeCasePattern.MatchString(baseName) {
 			t.Errorf("Metric name '%s' does not follow snake_case convention (lowercase and underscores only)", name)
 		}
@@ -196,7 +196,7 @@ func TestProperty14_MetricNamingSnakeCase(t *testing.T) {
 func TestProperty15_MetricNamingPrefix(t *testing.T) {
 	// Create a new registry to collect all metrics
 	registry := prometheus.NewRegistry()
-	
+
 	// Register all metrics with the test registry
 	m := &Metrics{
 		HTTPRequestsTotal: prometheus.NewCounterVec(
@@ -363,7 +363,7 @@ func TestProperty15_MetricNamingPrefix(t *testing.T) {
 	// Check each metric has the correct prefix
 	for _, mf := range metricFamilies {
 		name := mf.GetName()
-		
+
 		if !strings.HasPrefix(name, expectedPrefix) {
 			t.Errorf("Metric name '%s' does not have the required prefix '%s'", name, expectedPrefix)
 		}
@@ -376,7 +376,7 @@ func TestProperty15_MetricNamingPrefix(t *testing.T) {
 func TestProperty16_MetricNamingCounterSuffix(t *testing.T) {
 	// Create a new registry to collect all metrics
 	registry := prometheus.NewRegistry()
-	
+
 	// Register counter metrics
 	counters := map[string]prometheus.Collector{
 		"http_requests_total": prometheus.NewCounterVec(
@@ -455,7 +455,7 @@ func TestProperty16_MetricNamingCounterSuffix(t *testing.T) {
 	for _, mf := range metricFamilies {
 		if mf.GetType() == dto.MetricType_COUNTER {
 			name := mf.GetName()
-			
+
 			if !strings.HasSuffix(name, "_total") {
 				t.Errorf("Counter metric '%s' does not have the required '_total' suffix", name)
 			}
@@ -469,7 +469,7 @@ func TestProperty16_MetricNamingCounterSuffix(t *testing.T) {
 func TestProperty17_MetricNamingDurationSuffix(t *testing.T) {
 	// Create a new registry to collect all metrics
 	registry := prometheus.NewRegistry()
-	
+
 	// Register duration metrics (histograms)
 	durationMetrics := map[string]prometheus.Collector{
 		"http_request_duration_seconds": prometheus.NewHistogramVec(
@@ -518,7 +518,7 @@ func TestProperty17_MetricNamingDurationSuffix(t *testing.T) {
 	// Check each duration metric has _seconds in the name
 	for _, mf := range metricFamilies {
 		name := mf.GetName()
-		
+
 		// Duration metrics should contain "_seconds" or "_duration_seconds"
 		if strings.Contains(name, "duration") {
 			if !strings.Contains(name, "_seconds") {

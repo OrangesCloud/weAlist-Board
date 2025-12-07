@@ -385,7 +385,7 @@ func TestGeneratePresignedURL_ConcurrentCalls(t *testing.T) {
 		require.NoError(t, result.err)
 		assert.NotEmpty(t, result.url)
 		assert.NotEmpty(t, result.fileKey)
-		
+
 		// Each call should generate unique file keys
 		assert.False(t, fileKeys[result.fileKey], "File keys should be unique")
 		fileKeys[result.fileKey] = true

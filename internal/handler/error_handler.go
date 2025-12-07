@@ -15,7 +15,7 @@ import (
 func handleServiceError(c *gin.Context, err error) {
 	// Log the error for debugging
 	fmt.Printf("[ERROR] Service error: %v\n", err)
-	
+
 	// Check for GORM errors
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		response.SendError(c, http.StatusNotFound, response.ErrCodeNotFound, "Resource not found")

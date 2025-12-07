@@ -129,7 +129,6 @@ func TestProjectHandler_UpdateProject(t *testing.T) {
 	}
 }
 
-
 func TestProjectHandler_DeleteProject(t *testing.T) {
 	projectID := uuid.New()
 	userID := uuid.New()
@@ -222,7 +221,6 @@ func TestProjectHandler_DeleteProject(t *testing.T) {
 		})
 	}
 }
-
 
 func TestProjectHandler_SearchProjects(t *testing.T) {
 	workspaceID := uuid.New()
@@ -344,7 +342,6 @@ func TestProjectHandler_SearchProjects(t *testing.T) {
 		})
 	}
 }
-
 
 func TestProjectHandler_GetProjectInitSettings(t *testing.T) {
 	projectID := uuid.New()
@@ -550,7 +547,7 @@ func TestProjectHandler_GetProjectInitSettings_WithFieldOptions(t *testing.T) {
 		var response struct {
 			Success bool `json:"success"`
 			Data    struct {
-				Project dto.ProjectBasicInfo             `json:"project"`
+				Project dto.ProjectBasicInfo           `json:"project"`
 				Fields  []dto.FieldWithOptionsResponse `json:"fields"`
 			} `json:"data"`
 		}

@@ -411,7 +411,7 @@ func TestIntegrationCompleteAttachmentFlow(t *testing.T) {
 		// This is correct behavior - we only delete from DB if S3 deletion succeeds.
 		// For this integration test, we'll verify the cleanup job runs without errors
 		// and that it correctly identifies expired attachments.
-		
+
 		// Verify expired attachment exists before cleanup
 		expiredAttachments, err := attachmentRepo.FindExpiredTempAttachments(context.Background())
 		require.NoError(t, err)

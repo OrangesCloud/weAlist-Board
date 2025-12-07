@@ -17,7 +17,7 @@ import (
 
 func TestBoardService_GetBoard(t *testing.T) {
 	boardID := uuid.New()
-	
+
 	tests := []struct {
 		name        string
 		boardID     uuid.UUID
@@ -72,7 +72,7 @@ func TestBoardService_GetBoard(t *testing.T) {
 			mockFieldOptionRepo := &MockFieldOptionRepository{}
 			mockConverter := &MockFieldOptionConverter{}
 			tt.mockBoard(mockBoardRepo)
-			
+
 			mockParticipantRepo := &MockParticipantRepository{}
 			logger, _ := zap.NewDevelopment()
 			service := NewBoardService(mockBoardRepo, mockProjectRepo, mockFieldOptionRepo, mockParticipantRepo, &MockAttachmentRepository{}, nil, mockConverter, nil, logger)
@@ -104,10 +104,9 @@ func TestBoardService_GetBoard(t *testing.T) {
 	}
 }
 
-
 func TestBoardService_GetBoardsByProject_CustomFieldsFilter(t *testing.T) {
 	projectID := uuid.New()
-	
+
 	tests := []struct {
 		name        string
 		filters     *dto.BoardFilters
@@ -118,7 +117,7 @@ func TestBoardService_GetBoardsByProject_CustomFieldsFilter(t *testing.T) {
 		wantErrCode string
 	}{
 		{
-			name: "성공: CustomFields 필터링 없이 조회",
+			name:    "성공: CustomFields 필터링 없이 조회",
 			filters: nil,
 			mockProject: func(m *MockProjectRepository) {
 				m.FindByIDFunc = func(ctx context.Context, id uuid.UUID) (*domain.Project, error) {
@@ -261,7 +260,7 @@ func TestBoardService_GetBoardsByProject_CustomFieldsFilter(t *testing.T) {
 			mockConverter := &MockFieldOptionConverter{}
 			tt.mockProject(mockProjectRepo)
 			tt.mockBoard(mockBoardRepo)
-			
+
 			mockParticipantRepo := &MockParticipantRepository{}
 			logger, _ := zap.NewDevelopment()
 			service := NewBoardService(mockBoardRepo, mockProjectRepo, mockFieldOptionRepo, mockParticipantRepo, &MockAttachmentRepository{}, nil, mockConverter, nil, logger)
@@ -299,10 +298,9 @@ func TestBoardService_GetBoardsByProject_CustomFieldsFilter(t *testing.T) {
 	}
 }
 
-
 func TestBoardService_DeleteBoard(t *testing.T) {
 	boardID := uuid.New()
-	
+
 	tests := []struct {
 		name        string
 		boardID     uuid.UUID
@@ -346,7 +344,7 @@ func TestBoardService_DeleteBoard(t *testing.T) {
 			mockFieldOptionRepo := &MockFieldOptionRepository{}
 			mockConverter := &MockFieldOptionConverter{}
 			tt.mockBoard(mockBoardRepo)
-			
+
 			mockParticipantRepo := &MockParticipantRepository{}
 			logger, _ := zap.NewDevelopment()
 			service := NewBoardService(mockBoardRepo, mockProjectRepo, mockFieldOptionRepo, mockParticipantRepo, &MockAttachmentRepository{}, nil, mockConverter, nil, logger)
@@ -381,13 +379,13 @@ func TestBoardService_GetBoardsByProject_WithParticipantIDs(t *testing.T) {
 	user1ID := uuid.New()
 	user2ID := uuid.New()
 	user3ID := uuid.New()
-	
+
 	tests := []struct {
-		name              string
-		mockProject       func(*MockProjectRepository)
-		mockBoard         func(*MockBoardRepository)
-		wantParticipants  map[string][]uuid.UUID // board title -> participant IDs
-		wantErr           bool
+		name             string
+		mockProject      func(*MockProjectRepository)
+		mockBoard        func(*MockBoardRepository)
+		wantParticipants map[string][]uuid.UUID // board title -> participant IDs
+		wantErr          bool
 	}{
 		{
 			name: "성공: 참여자 ID 포함된 보드 목록 조회",
@@ -490,7 +488,7 @@ func TestBoardService_GetBoardsByProject_WithParticipantIDs(t *testing.T) {
 			mockConverter := &MockFieldOptionConverter{}
 			tt.mockProject(mockProjectRepo)
 			tt.mockBoard(mockBoardRepo)
-			
+
 			mockParticipantRepo := &MockParticipantRepository{}
 			logger, _ := zap.NewDevelopment()
 			service := NewBoardService(mockBoardRepo, mockProjectRepo, mockFieldOptionRepo, mockParticipantRepo, &MockAttachmentRepository{}, nil, mockConverter, nil, logger)
@@ -509,7 +507,7 @@ func TestBoardService_GetBoardsByProject_WithParticipantIDs(t *testing.T) {
 					t.Errorf("GetBoardsByProject() unexpected error = %v", err)
 					return
 				}
-				
+
 				// Verify participant IDs are included in response
 				for _, board := range got {
 					expectedParticipants, ok := tt.wantParticipants[board.Title]
@@ -517,24 +515,24 @@ func TestBoardService_GetBoardsByProject_WithParticipantIDs(t *testing.T) {
 						t.Errorf("Unexpected board title: %s", board.Title)
 						continue
 					}
-					
+
 					// Check ParticipantIDs field exists and is not nil
 					if board.ParticipantIDs == nil {
 						t.Errorf("Board %s: ParticipantIDs is nil, want non-nil slice", board.Title)
 						continue
 					}
-					
+
 					// Check participant count
 					if len(board.ParticipantIDs) != len(expectedParticipants) {
-						t.Errorf("Board %s: ParticipantIDs count = %d, want %d", 
+						t.Errorf("Board %s: ParticipantIDs count = %d, want %d",
 							board.Title, len(board.ParticipantIDs), len(expectedParticipants))
 						continue
 					}
-					
+
 					// Check each participant ID
 					for i, expectedID := range expectedParticipants {
 						if board.ParticipantIDs[i] != expectedID {
-							t.Errorf("Board %s: ParticipantIDs[%d] = %v, want %v", 
+							t.Errorf("Board %s: ParticipantIDs[%d] = %v, want %v",
 								board.Title, i, board.ParticipantIDs[i], expectedID)
 						}
 					}

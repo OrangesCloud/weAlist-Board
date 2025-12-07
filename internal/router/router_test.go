@@ -71,7 +71,7 @@ func TestMetricsEndpoint_RootPath(t *testing.T) {
 	registry := prometheus.NewRegistry()
 	logger := zap.NewNop()
 	m := metrics.NewWithRegistry(registry, logger)
-	
+
 	cfg := setupTestRouter("", m)
 	router := Setup(*cfg)
 
@@ -104,7 +104,7 @@ func TestMetricsEndpoint_NoAuthentication(t *testing.T) {
 	registry := prometheus.NewRegistry()
 	logger := zap.NewNop()
 	m := metrics.NewWithRegistry(registry, logger)
-	
+
 	cfg := setupTestRouter("", m)
 	router := Setup(*cfg)
 
@@ -123,7 +123,7 @@ func TestMetricsEndpoint_WithBasePath(t *testing.T) {
 	registry := prometheus.NewRegistry()
 	logger := zap.NewNop()
 	m := metrics.NewWithRegistry(registry, logger)
-	
+
 	basePath := "/api/boards"
 	cfg := setupTestRouter(basePath, m)
 	router := Setup(*cfg)
@@ -155,7 +155,7 @@ func TestMetricsEndpoint_ContainsAllMetrics(t *testing.T) {
 	registry := prometheus.NewRegistry()
 	logger := zap.NewNop()
 	_ = metrics.NewWithRegistry(registry, logger)
-	
+
 	// Gather metrics directly from the custom registry
 	metricFamilies, err := registry.Gather()
 	require.NoError(t, err)
@@ -182,7 +182,7 @@ func TestMetricsEndpoint_ContainsAllMetrics(t *testing.T) {
 	for _, metric := range expectedGaugeMetrics {
 		assert.True(t, metricNames[metric], "Registry should contain metric: %s", metric)
 	}
-	
+
 	// Counter 메트릭도 초기화 시 등록됨
 	expectedCounterMetrics := []string{
 		"board_service_db_connection_wait_total",
@@ -190,7 +190,7 @@ func TestMetricsEndpoint_ContainsAllMetrics(t *testing.T) {
 		"board_service_project_created_total",
 		"board_service_board_created_total",
 	}
-	
+
 	for _, metric := range expectedCounterMetrics {
 		assert.True(t, metricNames[metric], "Registry should contain metric: %s", metric)
 	}
@@ -201,7 +201,7 @@ func TestMetricsEndpoint_PrometheusFormat(t *testing.T) {
 	registry := prometheus.NewRegistry()
 	logger := zap.NewNop()
 	m := metrics.NewWithRegistry(registry, logger)
-	
+
 	cfg := setupTestRouter("", m)
 	router := Setup(*cfg)
 
@@ -215,7 +215,7 @@ func TestMetricsEndpoint_PrometheusFormat(t *testing.T) {
 
 	// Prometheus 형식 검증
 	lines := strings.Split(body, "\n")
-	
+
 	hasHelpLine := false
 	hasTypeLine := false
 	hasMetricLine := false

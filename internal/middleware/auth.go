@@ -80,7 +80,7 @@ func Auth(jwtSecret string) gin.HandlerFunc {
 
 		// Extract user ID from claims (support multiple claim formats)
 		var userIDStr string
-		
+
 		// Try "user_id" first (our format)
 		if uid, ok := claims["user_id"].(string); ok {
 			userIDStr = uid
