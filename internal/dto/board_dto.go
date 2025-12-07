@@ -1,3 +1,4 @@
+// Package dto provides data transfer objects for API requests and responses.
 package dto
 
 import (

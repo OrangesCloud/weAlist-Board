@@ -153,8 +153,7 @@ func TestIntegrationCreateBoardWithParticipants(t *testing.T) {
 	assert.Contains(t, dbUserIDs, participant3)
 }
 
-// TestIntegration_CreateBoardWithoutParticipants tests board creation without participants
-// **Validates: Requirements 1.3**
+// TestIntegrationCreateBoardWithoutParticipants tests board creation without participants.
 func TestIntegrationCreateBoardWithoutParticipants(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 	router := setupIntegrationRouter(db)
@@ -228,8 +227,7 @@ func TestIntegrationCreateBoardWithoutParticipants(t *testing.T) {
 	}
 }
 
-// TestIntegration_CreateBoardValidationErrors tests validation errors for participants
-// **Validates: Requirements 3.1, 3.2**
+// TestIntegrationCreateBoardValidationErrors tests validation errors for participants.
 func TestIntegrationCreateBoardValidationErrors(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 	router := setupIntegrationRouter(db)
@@ -318,8 +316,7 @@ func TestIntegrationCreateBoardValidationErrors(t *testing.T) {
 	}
 }
 
-// TestIntegration_CreateBoardDuplicateParticipants tests duplicate participant handling
-// **Validates: Requirements 1.4**
+// TestIntegrationCreateBoardDuplicateParticipants tests duplicate participant handling.
 func TestIntegrationCreateBoardDuplicateParticipants(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 	router := setupIntegrationRouter(db)

@@ -1,3 +1,4 @@
+// Package metrics provides Prometheus metrics for the application.
 package metrics
 
 // IncrementProjectCreated increments project creation counter

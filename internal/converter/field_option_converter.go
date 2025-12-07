@@ -1,3 +1,4 @@
+// Package converter provides type conversion utilities for domain objects.
 package converter
 
 import (

@@ -139,8 +139,7 @@ func TestIntegrationBoardStartDateAndAssigneeDefault(t *testing.T) {
 	}
 }
 
-// TestIntegration_ProjectStartDateAndDueDate tests project date fields
-// **Validates: Requirements 7.1, 7.2, 7.3**
+// TestIntegrationProjectStartDateAndDueDate tests project date fields.
 func TestIntegrationProjectStartDateAndDueDate(t *testing.T) {
 	db := setupIntegrationTestDB(t)
 

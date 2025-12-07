@@ -1,3 +1,4 @@
+// Package job provides background job implementations.
 package job
 
 import (

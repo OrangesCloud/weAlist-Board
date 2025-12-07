@@ -1,3 +1,4 @@
+// Package logger provides structured logging utilities using zap.
 package logger
 
 import (
@@ -73,7 +74,7 @@ func parseLevel(level string) (zapcore.Level, error) {
 
 // WithFields returns a logger with additional fields
 func (l *Logger) WithFields(fields ...zap.Field) *Logger {
-	return &Logger{Logger: l.Logger.With(fields...)}
+	return &Logger{Logger: l.With(fields...)}
 }
 
 // WithRequestID returns a logger with request ID field

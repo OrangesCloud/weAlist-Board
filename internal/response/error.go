@@ -1,3 +1,4 @@
+// Package response provides HTTP response utilities and error handling.
 package response
 
 // Error codes
