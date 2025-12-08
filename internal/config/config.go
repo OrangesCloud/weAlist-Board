@@ -40,6 +40,7 @@ type DatabaseConfig struct {
 	User            string        `yaml:"user"`
 	Password        string        `yaml:"password"`
 	DBName          string        `yaml:"dbname"`
+	SSLMode         string        `yaml:"sslmode"`
 	MaxOpenConns    int           `yaml:"max_open_conns"`
 	MaxIdleConns    int           `yaml:"max_idle_conns"`
 	ConnMaxLifetime time.Duration `yaml:"conn_max_lifetime"`
@@ -185,7 +186,7 @@ func (c *Config) overrideFromEnv() {
 	// Database - DATABASE_URL takes precedence (original format)
 	// Parse DATABASE_URL first if provided
 	if databaseURL := os.Getenv("DATABASE_URL"); databaseURL != "" {
-		host, port, user, password, dbname, err := parseDatabaseURL(databaseURL)
+		host, port, user, password, dbname, sslmode, err := parseDatabaseURL(databaseURL)
 		if err != nil {
 			// Log error but continue - individual variables might be set
 			fmt.Fprintf(os.Stderr, "Warning: Failed to parse DATABASE_URL: %v\n", err)
@@ -196,6 +197,7 @@ func (c *Config) overrideFromEnv() {
 			c.Database.User = user
 			c.Database.Password = password
 			c.Database.DBName = dbname
+			c.Database.SSLMode = sslmode
 		}
 	}
 
@@ -365,40 +367,44 @@ func (c *Config) validateUserAPIBaseURL() error {
 
 // GetDSN returns the database connection string
 func (c *DatabaseConfig) GetDSN() string {
+	sslmode := c.SSLMode
+	if sslmode == "" {
+		sslmode = "disable"
+	}
 	return fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s dbname=%s sslmode=require",
-		c.Host, c.Port, c.User, c.Password, c.DBName,
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		c.Host, c.Port, c.User, c.Password, c.DBName, sslmode,
 	)
 }
 
 // parseDatabaseURL parses a PostgreSQL connection URL and extracts connection components
 // Expected format: postgresql://user:password@host:port/dbname?sslmode=disable
-func parseDatabaseURL(databaseURL string) (host, port, user, password, dbname string, err error) {
+func parseDatabaseURL(databaseURL string) (host, port, user, password, dbname, sslmode string, err error) {
 	if databaseURL == "" {
-		return "", "", "", "", "", fmt.Errorf("DATABASE_URL is empty")
+		return "", "", "", "", "", "", fmt.Errorf("DATABASE_URL is empty")
 	}
 
 	// Parse the URL
 	u, err := url.Parse(databaseURL)
 	if err != nil {
-		return "", "", "", "", "", fmt.Errorf("invalid DATABASE_URL format: %w\nExpected format: postgresql://user:password@host:port/dbname?sslmode=disable", err)
+		return "", "", "", "", "", "", fmt.Errorf("invalid DATABASE_URL format: %w\nExpected format: postgresql://user:password@host:port/dbname?sslmode=disable", err)
 	}
 
 	// Validate scheme
 	if u.Scheme != "postgresql" && u.Scheme != "postgres" {
-		return "", "", "", "", "", fmt.Errorf("invalid DATABASE_URL scheme '%s': must be 'postgresql' or 'postgres'\nExpected format: postgresql://user:password@host:port/dbname?sslmode=disable", u.Scheme)
+		return "", "", "", "", "", "", fmt.Errorf("invalid DATABASE_URL scheme '%s': must be 'postgresql' or 'postgres'\nExpected format: postgresql://user:password@host:port/dbname?sslmode=disable", u.Scheme)
 	}
 
 	// Extract user and password
 	if u.User == nil {
-		return "", "", "", "", "", fmt.Errorf("DATABASE_URL missing user credentials\nExpected format: postgresql://user:password@host:port/dbname?sslmode=disable")
+		return "", "", "", "", "", "", fmt.Errorf("DATABASE_URL missing user credentials\nExpected format: postgresql://user:password@host:port/dbname?sslmode=disable")
 	}
 	user = u.User.Username()
 	password, _ = u.User.Password()
 
 	// Extract host and port
 	if u.Host == "" {
-		return "", "", "", "", "", fmt.Errorf("DATABASE_URL missing host\nExpected format: postgresql://user:password@host:port/dbname?sslmode=disable")
+		return "", "", "", "", "", "", fmt.Errorf("DATABASE_URL missing host\nExpected format: postgresql://user:password@host:port/dbname?sslmode=disable")
 	}
 
 	// Split host and port
@@ -415,8 +421,14 @@ func parseDatabaseURL(databaseURL string) (host, port, user, password, dbname st
 	// Extract database name
 	dbname = strings.TrimPrefix(u.Path, "/")
 	if dbname == "" {
-		return "", "", "", "", "", fmt.Errorf("DATABASE_URL missing database name\nExpected format: postgresql://user:password@host:port/dbname?sslmode=disable")
+		return "", "", "", "", "", "", fmt.Errorf("DATABASE_URL missing database name\nExpected format: postgresql://user:password@host:port/dbname?sslmode=disable")
 	}
 
-	return host, port, user, password, dbname, nil
+	// Extract sslmode from query parameters
+	sslmode = u.Query().Get("sslmode")
+	if sslmode == "" {
+		sslmode = "disable"
+	}
+
+	return host, port, user, password, dbname, sslmode, nil
 }

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: board-service-config
+data:
+  PORT: "8082"
+  GIN_MODE: "release"
+  # Database
+  DB_HOST: "postgres"
+  DB_PORT: "5432"
+  DB_NAME: "board_db"
+  # Redis
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+  # Service URLs
+  USER_SERVICE_URL: "http://user-service:8080"
+  AUTH_SERVICE_URL: "http://auth-service:8081"
