@@ -95,8 +95,13 @@ func Setup(cfg Config) *gin.Engine {
 		cfg.Logger.Info("No base path configured, using root path")
 	}
 
-	// Health check endpoint
-	baseGroup.GET("/health", healthCheckHandler(cfg.DB))
+	// Health check endpoints
+	// Liveness probe - 앱 프로세스만 확인 (DB/Redis 무관)
+	baseGroup.GET("/health/live", livenessHandler())
+	// Readiness probe - DB, Redis 연결 확인
+	baseGroup.GET("/health/ready", readinessHandler(cfg.DB))
+	// 기존 /health 엔드포인트 유지 (하위 호환성)
+	baseGroup.GET("/health", readinessHandler(cfg.DB))
 
 	// Swagger documentation endpoint
 	baseGroup.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -126,16 +131,30 @@ func Setup(cfg Config) *gin.Engine {
 	return router
 }
 
-// healthCheckHandler returns a handler for the health check endpoint
-func healthCheckHandler(db *gorm.DB) gin.HandlerFunc {
+// livenessHandler returns a handler for the liveness probe
+// This only checks if the application process is running (no DB/Redis check)
+// Used by Kubernetes to determine if the pod should be restarted
+func livenessHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"status": "alive",
+		})
+	}
+}
+
+// readinessHandler returns a handler for the readiness probe
+// This checks database and Redis connections
+// Used by Kubernetes to determine if the pod should receive traffic
+func readinessHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		checks := gin.H{}
+		isReady := true
 
 		// Check database connection
 		sqlDB, err := db.DB()
 		if err != nil {
-			c.JSON(500, gin.H{
-				"status":   "unhealthy",
+			c.JSON(503, gin.H{
+				"status":   "not_ready",
 				"database": "error",
 				"error":    err.Error(),
 			})
@@ -143,8 +162,8 @@ func healthCheckHandler(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		if err := sqlDB.Ping(); err != nil {
-			c.JSON(500, gin.H{
-				"status":   "unhealthy",
+			c.JSON(503, gin.H{
+				"status":   "not_ready",
 				"database": "disconnected",
 				"error":    err.Error(),
 			})
@@ -159,7 +178,8 @@ func healthCheckHandler(db *gorm.DB) gin.HandlerFunc {
 			defer cancel()
 
 			if err := redisClient.Ping(ctx).Err(); err != nil {
-				checks["redis"] = "disconnected - " + err.Error()
+				checks["redis"] = "disconnected"
+				isReady = false
 			} else {
 				checks["redis"] = "connected"
 			}
@@ -167,10 +187,17 @@ func healthCheckHandler(db *gorm.DB) gin.HandlerFunc {
 			checks["redis"] = "not_configured"
 		}
 
-		c.JSON(200, gin.H{
-			"status": "healthy",
-			"checks": checks,
-		})
+		if isReady {
+			c.JSON(200, gin.H{
+				"status": "ready",
+				"checks": checks,
+			})
+		} else {
+			c.JSON(503, gin.H{
+				"status": "not_ready",
+				"checks": checks,
+			})
+		}
 	}
 }
 

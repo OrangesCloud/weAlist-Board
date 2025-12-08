@@ -18,7 +18,7 @@ spec:
         - name: board-service
           image: board-service:latest
           ports:
-            - containerPort: 8082
+            - containerPort: 8000
           envFrom:
             - configMapRef:
                 name: board-service-config
@@ -27,13 +27,13 @@ spec:
           livenessProbe:
             httpGet:
               path: /health/live
-              port: 8082
+              port: 8000
             initialDelaySeconds: 10
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /health/ready
-              port: 8082
+              port: 8000
             initialDelaySeconds: 5
             periodSeconds: 5
           resources:

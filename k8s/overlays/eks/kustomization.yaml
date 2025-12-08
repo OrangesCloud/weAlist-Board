@@ -16,6 +16,7 @@ replicas:
     count: 2
 
 patches:
+  # ConfigMap 패치 - EKS 프로덕션 환경 설정
   - target:
       kind: ConfigMap
       name: board-service-config
@@ -23,6 +24,13 @@ patches:
       - op: replace
         path: /data/DB_HOST
         value: "${RDS_ENDPOINT}"
+      - op: replace
+        path: /data/REDIS_HOST
+        value: "${ELASTICACHE_ENDPOINT}"
+      - op: replace
+        path: /data/S3_BUCKET
+        value: "${S3_BUCKET}"
+  # Deployment 패치 - 프로덕션 리소스 증가
   - target:
       kind: Deployment
       name: board-service
@@ -33,3 +41,25 @@ patches:
       - op: replace
         path: /spec/template/spec/containers/0/resources/limits/memory
         value: "512Mi"
+  # Ingress 패치 - AWS ALB Ingress Controller
+  - target:
+      kind: Ingress
+      name: board-service
+    patch: |-
+      - op: replace
+        path: /spec/ingressClassName
+        value: "alb"
+      - op: add
+        path: /metadata/annotations/alb.ingress.kubernetes.io~1scheme
+        value: "internet-facing"
+      - op: add
+        path: /metadata/annotations/alb.ingress.kubernetes.io~1target-type
+        value: "ip"
+      - op: add
+        path: /metadata/annotations/alb.ingress.kubernetes.io~1healthcheck-path
+        value: "/health"
+      - op: add
+        path: /metadata/annotations/alb.ingress.kubernetes.io~1listen-ports
+        value: '[{"HTTP": 80}, {"HTTPS": 443}]'
+      - op: remove
+        path: /metadata/annotations/nginx.ingress.kubernetes.io~1rewrite-target

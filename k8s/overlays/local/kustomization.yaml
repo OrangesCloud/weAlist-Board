@@ -16,10 +16,36 @@ replicas:
     count: 1
 
 patches:
+  # ConfigMap 패치 - Local 개발 환경 설정
   - target:
       kind: ConfigMap
       name: board-service-config
     patch: |-
       - op: replace
-        path: /data/GIN_MODE
+        path: /data/ENV
+        value: "dev"
+      - op: replace
+        path: /data/SERVER_MODE
         value: "debug"
+      - op: add
+        path: /data/S3_ENDPOINT
+        value: "http://minio:9000"
+  # Secret 패치 - MinIO 자격증명
+  - target:
+      kind: Secret
+      name: board-service-secret
+    patch: |-
+      - op: replace
+        path: /stringData/S3_ACCESS_KEY
+        value: "minioadmin"
+      - op: replace
+        path: /stringData/S3_SECRET_KEY
+        value: "minioadmin"
+  # Ingress 패치 - Local 환경용
+  - target:
+      kind: Ingress
+      name: board-service
+    patch: |-
+      - op: replace
+        path: /spec/ingressClassName
+        value: "nginx"

@@ -3,8 +3,11 @@ kind: ConfigMap
 metadata:
   name: board-service-config
 data:
-  PORT: "8082"
-  GIN_MODE: "release"
+  # Server
+  ENV: "prod"
+  SERVER_PORT: "8000"
+  SERVER_MODE: "release"
+  LOG_LEVEL: "info"
   # Database
   DB_HOST: "postgres"
   DB_PORT: "5432"
@@ -14,4 +17,6 @@ data:
   REDIS_PORT: "6379"
   # Service URLs
   USER_SERVICE_URL: "http://user-service:8080"
-  AUTH_SERVICE_URL: "http://auth-service:8081"
+  # S3 (AWS - IAM Role 사용, Local에서는 MinIO로 오버라이드)
+  S3_REGION: "ap-northeast-2"
+  S3_BUCKET: "wealist-files"
